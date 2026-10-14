@@ -1,146 +1,137 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl" id="htmlRoot">
+<html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
 <title>AHMED DESIGN</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<!-- استدعاء خط فخم جداً (Cairo) -->
-<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;800;900&display=swap" rel="stylesheet">
-
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
 <style>
-/* ==== الخلفية المتحركة والجسيمات العائمة ==== */
-@keyframes gradientAnimation {
+@keyframes bgMove {
     0% { background-position: 0% 50%; }
     50% { background-position: 100% 50%; }
     100% { background-position: 0% 50%; }
 }
-
-@keyframes floatOrbs {
-    0% { transform: translateY(0px) scale(1); }
-    50% { transform: translateY(-30px) scale(1.1); }
-    100% { transform: translateY(0px) scale(1); }
-}
-
 body {
     margin: 0;
     font-family: 'Cairo', sans-serif;
-    color: #fff;
-    background: linear-gradient(-45deg, #05000a, #1a0033, #3b0066, #120024, #1f0036);
+    background: linear-gradient(-45deg, #000000, #1a0033, #4b0082, #ffd700);
     background-size: 400% 400%;
-    animation: gradientAnimation 12s ease infinite;
-    overflow-x: hidden;
+    animation: bgMove 10s ease infinite;
+    color: #fff;
 }
-
-/* دوائر عائمة في الخلفية (حاجات طالعة ونازلة) */
-.bg-orbs {
-    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-    overflow: hidden; z-index: -1; pointer-events: none;
-}
-.orb {
-    position: absolute; border-radius: 50%; filter: blur(60px); opacity: 0.4;
-    animation: floatOrbs 8s ease-in-out infinite;
-}
-.orb1 { width: 300px; height: 300px; background: #8a2be2; top: 10%; left: 10%; animation-delay: 0s; }
-.orb2 { width: 350px; height: 350px; background: #ffd700; bottom: 10%; right: 10%; animation-delay: 3s; opacity: 0.25; }
-.orb3 { width: 250px; height: 250px; background: #4b0082; top: 50%; left: 60%; animation-delay: 5s; }
-
-.container { max-width: 1200px; margin: auto; padding: 1rem; position: relative; z-index: 2; }
-.flex { display: flex; align-items: center; gap: 1rem; }
-
 header {
     position: fixed; top: 0; left: 0; right: 0;
-    padding: 1rem 2rem;
-    background: rgba(5, 0, 10, 0.75);
-    backdrop-filter: blur(12px);
-    z-index: 1000;
-    border-bottom: 1px solid rgba(255, 215, 0, 0.15);
+    padding: 1rem 1.5rem; background: rgba(0,0,0,0.8);
+    display: flex; justify-content: space-between; align-items: center;
+    z-index: 100; border-bottom: 1px solid rgba(255,215,0,0.3);
 }
-.logo { font-size: 1.7rem; font-weight: 900; color: #ffd700; text-shadow: 0 0 10px rgba(255,215,0,0.5); }
-
-/* شاشة الترحيب */
-.welcome {
-    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-    background: #05000a;
-    display: flex; flex-direction: column; justify-content: center; align-items: center;
-    z-index: 9999; font-size: 2.2rem; text-align: center; color: #fff;
-    transition: opacity 0.6s ease, visibility 0.6s ease;
-}
-.welcome.fade-out { opacity: 0; visibility: hidden; pointer-events: none; }
-.welcome .sub { font-size: 1.2rem; color: #ffd700; margin-top: 10px; font-weight: 600; }
-.greet { font-size: 1.8rem; margin-left: .5rem; }
-
-/* زر القائمة */
+.logo { font-size: 1.5rem; font-weight: 900; color: #ffd700; }
 .menu-btn {
-    position: fixed; top: 1.2rem; right: 1.2rem;
-    width: 3rem; height: 3rem;
-    background: rgba(20, 5, 35, 0.85);
-    border: 1px solid #ffd700;
-    border-radius: 50%;
-    display: flex; justify-content: center; align-items: center;
-    cursor: pointer; z-index: 1002;
-    box-shadow: 0 0 10px rgba(255,215,0,0.3);
+    width: 2.5rem; height: 2.5rem; background: #1a0033;
+    border: 1px solid #ffd700; border-radius: 50%;
+    display: flex; flex-direction: column; justify-content: center; align-items: center;
+    cursor: pointer; gap: 3px;
 }
-.menu-btn span { width: 5px; height: 5px; background: #ffd700; border-radius: 50%; margin: 2px; }
+.menu-btn span { width: 4px; height: 4px; background: #ffd700; border-radius: 50%; }
 
-/* القائمة الجانبية */
 #drawer {
-    position: fixed; top: 0; bottom: 0; right: -300px; width: 280px;
-    background: rgba(12, 2, 22, 0.98);
-    backdrop-filter: blur(15px);
-    transition: right .35s cubic-bezier(0.4, 0, 0.2, 1);
-    z-index: 1003; padding-top: 5rem;
-    border-left: 1px solid rgba(255, 215, 0, 0.3);
-    box-shadow: -5px 0 25px rgba(0,0,0,0.8);
+    position: fixed; top: 0; bottom: 0; right: -250px; width: 250px;
+    background: #0d001a; transition: 0.3s; z-index: 101;
+    padding-top: 5rem; border-left: 1px solid #ffd700;
 }
 #drawer.show { right: 0; }
 #drawer ul { list-style: none; padding: 0; margin: 0; }
-#drawer li {
-    padding: 1.3rem 1.5rem;
-    border-bottom: 1px solid rgba(255,215,0,0.15);
-    cursor: pointer; font-weight: 700; color: #fff;
-    transition: 0.2s;
-}
-#drawer li:hover { background: rgba(255,215,0,0.15); color: #ffd700; padding-right: 1.8rem; }
+#drawer li { padding: 1rem; border-bottom: 1px solid #333; cursor: pointer; font-weight: bold; }
+#drawer li:hover { background: rgba(255,215,0,0.2); color: #ffd700; }
 
-section { min-height: 100vh; padding: 7rem 1rem 2rem; }
-section h2 { font-size: 2.2rem; color: #ffd700; margin-bottom: 1rem; font-weight: 800; text-shadow: 0 0 15px rgba(255,215,0,0.3); }
-
+.container { max-width: 800px; margin: auto; padding: 6rem 1rem 2rem; }
 .card {
-    background: rgba(15, 5, 25, 0.65);
-    border: 1px solid rgba(255, 215, 0, 0.25);
-    border-radius: 16px; padding: 2rem; margin-bottom: 1.5rem;
-    backdrop-filter: blur(10px);
-    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+    background: rgba(15, 0, 30, 0.7); border: 1px solid rgba(255,215,0,0.3);
+    border-radius: 12px; padding: 1.5rem; margin-bottom: 1.5rem;
 }
-section textarea, section input[type="text"] {
-    width: 100%; padding: 1rem; margin: 0.6rem 0;
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 215, 0, 0.3); color: #fff;
-    border-radius: 8px; outline: none; font-family: 'Cairo', sans-serif;
-    box-sizing: border-box; transition: 0.3s;
+input, textarea {
+    width: 100%; padding: 0.8rem; margin: 0.5rem 0;
+    background: rgba(255,255,255,0.1); border: 1px solid #555;
+    color: #fff; border-radius: 6px; box-sizing: border-box;
 }
-section input[type="text"]:focus, section textarea:focus {
-    border-color: #ffd700; box-shadow: 0 0 10px rgba(255,215,0,0.2);
+button {
+    background: #ffd700; color: #000; font-weight: bold;
+    padding: 0.8rem; border: none; border-radius: 6px; width: 100%; cursor: pointer;
 }
+.gallery { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 10px; }
+.gallery img { width: 100%; height: 120px; object-fit: cover; border-radius: 8px; border: 2px solid #ffd700; cursor: pointer; }
 
-/* تصميم زر رفع الملفات والزرار العادي */
-.file-upload-wrapper {
-    position: relative; overflow: hidden; display: inline-block; width: 100%;
+/* Modal للصور */
+#modal {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.9); display: none; justify-content: center; align-items: center; z-index: 1000;
 }
-.file-upload-wrapper input[type="file"] {
-    position: absolute; left: 0; top: 0; opacity: 0; width: 100%; height: 100%; cursor: pointer;
-}
-.custom-file-btn {
-    display: block; width: 100%; padding: 1rem;
-    background: rgba(255, 215, 0, 0.1); border: 2px dashed #ffd700;
-    color: #ffd700; text-align: center; border-radius: 8px; font-weight: 700;
-    cursor: pointer; transition: 0.3s; box-sizing: border-box;
-}
-.custom-file-btn:hover { background: rgba(255, 215, 0, 0.2); }
+#modal img { max-width: 90%; max-height: 80%; border-radius: 8px; border: 2px solid #ffd700; }
+#modal span { position: absolute; top: 20px; right: 30px; font-size: 2.5rem; color: #ffd700; cursor: pointer; }
 
-section button {
-    background: linear-gradient(135deg, #ffd700, #ffa500); color: #000; font-weight: 800;
-    padding: 1rem 2rem; border: none; border-radius: 8px; cursor: pointer;
-    margin-top: 10px; font-family: 'Cairo', sans-serif; width: 100%;
-    box-shadow: 0 4px 15px rgba(255,215,0,
-    
+footer { text-align: center; padding: 2rem; background: #000; }
+footer a { color: #00ff66; text-decoration: none; font-weight: bold; }
+</style>
+</head>
+<body>
+
+<header>
+    <div class="logo">AHMED DESIGN</div>
+    <div class="menu-btn" id="menuBtn">
+        <span></span><span></span><span></span>
+    </div>
+</header>
+
+<nav id="drawer">
+    <ul>
+        <li onclick="alert('اللغة العربية مفعلة')">🈳 اللغة / Language</li>
+        <li onclick="location.reload()">🔄 تحديث الصفحة</li>
+    </ul>
+</nav>
+
+<div id="modal">
+    <span onclick="document.getElementById('modal').style.display='none'">&times;</span>
+    <img id="modalImg" src="">
+</div>
+
+<div class="container">
+    <div class="card">
+        <h2>طلب تصميم</h2>
+        <input type="text" placeholder="العنوان">
+        <textarea placeholder="اكتب تفاصيل طلبك..."></textarea>
+        <button>إرسال الطلب</button>
+    </div>
+
+    <div class="card">
+        <h2>معرض الصور (اضغط لتكبير الصورة)</h2>
+        <div class="gallery">
+            <img src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=400" onclick="openModal(this.src)">
+            <img src="https://images.unsplash.com/photo-1634017839464-5c339ebe3cb4?w=400" onclick="openModal(this.src)">
+            <img src="https://images.unsplash.com/photo-1618172193763-c511deb635ca?w=400" onclick="openModal(this.src)">
+        </div>
+    </div>
+
+    <div class="card">
+        <h2>رفع تصميم</h2>
+        <input type="file" accept="image/*">
+        <button style="margin-top:10px;">رفع الصورة</button>
+    </div>
+</div>
+
+<footer>
+    <a href="https://wa.me/201122160714" target="_blank">استفسار عبر واتساب: 01122160714</a>
+</footer>
+
+<script>
+const menuBtn = document.getElementById('menuBtn');
+const drawer = document.getElementById('drawer');
+menuBtn.onclick = () => drawer.classList.toggle('show');
+
+function openModal(src) {
+    document.getElementById('modalImg').src = src;
+    document.getElementById('modal').style.display = 'flex';
+}
+</script>
+
+</body>
+</html>
