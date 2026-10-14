@@ -1,15 +1,297 @@
 <!DOCTYPE html>
-<html>
+<html lang="ar" dir="rtl">
 <head>
-  <meta charset="utf-8">
-  <title>موقعي من الهاتف</title>
-  <style>
-    body{font-family:Arial,Helvetica,sans-serif;
-         max-width:600px;margin:auto;padding:2rem;}
-  </style>
+<meta charset="UTF-8">
+<title>AHMED DESIGN</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<!-- ---------- 3D animated background (Three‑js style) ---------- -->
+<style>
+/* ==== 3D animated gradient background ==== */
+@keyframes bgMove {
+    0%   {background-position: 0% 50%;}
+    50%  {background-position: 100% 50%;}
+    100% {background-position: 0% 50%;}
+}
+body{
+    margin:0;
+    font-family: 'Segoe UI', Tahoma, sans-serif;
+    color:#fff;
+    background: linear-gradient(135deg,
+                #000000,
+                #2e004f,
+                #3c0d5e,
+                #8c4bff);
+    background-size: 300% 300%;
+    animation: bgMove 20s linear infinite;
+    overflow-x:hidden;
+}
+
+/* ==== Global utilities ==== */
+.container{max-width:1200px;margin:auto;padding:1rem;}
+.flex{display:flex;align-items:center;gap:1rem;}
+.hidden{display:none;}
+
+/* ==== Header (greeting + 3‑dot menu) ==== */
+header{
+    position:fixed;
+    top:0;left:0;right:0;
+    padding:1rem 2rem;
+    background:rgba(0,0,0,0.4);
+    backdrop-filter:blur(8px);
+    z-index:100;
+}
+.logo{
+    font-size:1.8rem;
+    font-weight:900;
+    color:#ffd700;     /* golden */
+}
+.welcome{
+    text-align:center;
+    margin-top:8rem;
+    font-size:2.2rem;
+    line-height:1.4;
+}
+.welcome .sub{font-size:1.2rem;color:#bbb;}
+/* === greeting emoji === */
+.greet{font-size:2rem;margin-left:.5rem;}
+
+/* ==== Three‑dot button ==== */
+.menu-btn{
+    position:fixed;
+    top:1.2rem;
+    left:1.2rem;
+    width:2.5rem;
+    height:2.5rem;
+    background:rgba(0,0,0,0.6);
+    border-radius:50%;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    cursor:pointer;
+    z-index:101;
+}
+.menu-btn span{
+    width:6px;height:6px;background:#fff;
+    border-radius:50%;
+    margin:2px;
+}
+
+/* ==== Side drawer (overlay) ==== */
+#drawer{
+    position:fixed;
+    top:0;bottom:0;left:-260px;
+    width:260px;
+    background:rgba(0,0,0,0.9);
+    backdrop-filter:blur(4px);
+    transition:left .3s ease;
+    z-index:100;
+    padding-top:4rem;
+}
+#drawer.show{left:0;}
+#drawer ul{list-style:none;padding:0;margin:0;}
+#drawer li{
+    padding:1rem 1.5rem;
+    border-bottom:1px solid #333;
+    cursor:pointer;
+}
+#drawer li:hover{background:rgba(255,215,0,.1);}
+
+/* ==== Light/Dark toggle ==== */
+.toggle{
+    position:fixed;
+    bottom:1.5rem;
+    left:1.5rem;
+    background:rgba(0,0,0,0.6);
+    color:#fff;
+    padding:.5rem 1rem;
+    border-radius:4px;
+    cursor:pointer;
+}
+
+/* ==== Main sections (scroll) ==== */
+section{
+    min-height:100vh;
+    padding:6rem 0 2rem;
+}
+section h2{
+    font-size:2rem;
+    color:#ffd700;
+    margin-bottom:1rem;
+}
+section .card{
+    background:rgba(0,0,0,0.4);
+    border-radius:8px;
+    padding:1.5rem;
+    margin-bottom:1.5rem;
+}
+section textarea, section input{
+    width:100%;
+    padding:.8rem;
+    margin:0.5rem 0;
+    border:none;
+    border-radius:4px;
+}
+
+/* ==== Footer ==== */
+footer{
+    background:#111;
+    text-align:center;
+    padding:2rem 1rem;
+    font-size:1rem;
+}
+footer a{
+    color:#0f0;
+    text-decoration:none;
+    font-weight:600;
+}
+
+/* ==== Light mode overrides ==== */
+body.light{
+    color:#111;
+    background:#f5f5f5;
+}
+body.light header{background:rgba(255,255,255,0.7);}
+body.light .menu-btn{background:rgba(255,255,255,0.7);}
+body.light #drawer{background:rgba(255,255,255,0.95);color:#000;}
+body.light #drawer li{border-bottom:1px solid #ccc;}
+body.light .toggle{background:rgba(255,255,255,0.8);color:#000;}
+body.light section .card{background:rgba(255,255,255,0.9);color:#111;}
+</style>
 </head>
-<body>
-  <h1>أهلاً وسهلاً!</h1>
-  <p>هذا الموقع تم إنشاؤه بالكامل من هاتفك.</p>
+
+<body class="dark">
+
+<!-- ----------- Three‑dot menu button ------------ -->
+<div class="menu-btn" id="menuBtn">
+    <span></span><span></span><span></span>
+</div>
+
+<!-- ----------- Side drawer (menu) ------------ -->
+<nav id="drawer">
+    <ul>
+        <li data-action="lang">🈳 تغيير اللغة (Arabic / English)</li>
+        <li data-action="theme">🌗 وضع الإضاءة (Dark / Light)</li>
+        <li data-action="font">🔡 حجم الخط</li>
+        <li data-action="gallery">🖼️ معرض الصور</li>
+        <li data-action="pages">📄 الصفحات</li>
+    </ul>
+</nav>
+
+<!-- ----------- Header (greeting) ------------ -->
+<header class="flex">
+    <div class="logo">AHMED DESIGN</div>
+    <div class="flex" style="margin-right:auto;">
+        <span>Hello</span><span class="greet">👋</span>
+    </div>
+</header>
+
+<!-- ----------- Welcome splash ------------ -->
+<div class="welcome" id="welcome">
+    <div>أهلاً بكم في <strong>AHMED DESIGN</strong></div>
+    <div class="sub">Welcome to AHMED DESIGN</div>
+</div>
+
+<!-- ----------- Main content ------------ -->
+<main class="container">
+
+<!-- Section 1 – طلب تصميم -->
+<section id="request">
+    <h2>طلب تصميم</h2>
+    <div class="card">
+        <p>أرسل طلبك وسنقوم بتنفيذه.</p>
+        <input type="text" placeholder="العنوان">
+        <textarea rows="4" placeholder="وصف الطلب"></textarea>
+        <button>إرسال الطلب</button>
+    </div>
+</section>
+
+<!-- Section 2 – اختيار تصميم -->
+<section id="choose">
+    <h2>اختيار تصميم</h2>
+    <div class="card">
+        <p>تصفح أعمالي السابقة واختر ما يعجبك.</p>
+        <!-- Placeholder for gallery thumbnails -->
+        <div style="display:flex;gap:.5rem;flex-wrap:wrap;">
+            <div style="width:30%;height:150px;background:#444;"></div>
+            <div style="width:30%;height:150px;background:#555;"></div>
+            <div style="width:30%;height:150px;background:#666;"></div>
+        </div>
+    </div>
+</section>
+
+<!-- Section 3 – وضع تصميم -->
+<section id="upload">
+    <h2>رفع تصميم</h2>
+    <div class="card">
+        <p>ارفع صورة ما يعجبك لنعمل على تصميم مشابه.</p>
+        <input type="file" accept="image/*">
+        <button>رفع الصورة</button>
+    </div>
+</section>
+
+</main>
+
+<!-- ----------- Footer ------------ -->
+<footer>
+    <a href="https://wa.me/201122160714" target="_blank">
+        استفسار عبر واتساب: 01122160714
+    </a>
+</footer>
+
+<!-- ---------- Light/Dark toggle (quick) ---------- -->
+<div class="toggle" id="themeToggle">تبديل الوضع</div>
+
+<script>
+// ---------- Welcome splash ----------
+document.addEventListener('DOMContentLoaded',()=> {
+    setTimeout(()=> {
+        document.getElementById('welcome').style.opacity = 0;
+        document.getElementById('welcome').style.transition = 'opacity .8s';
+        setTimeout(()=> document.getElementById('welcome').remove(),800);
+    },2000);
+});
+
+// ---------- Menu drawer ----------
+const menuBtn=document.getElementById('menuBtn');
+const drawer=document.getElementById('drawer');
+menuBtn.onclick=()=> drawer.classList.toggle('show');
+
+// ---------- Theme toggle ----------
+const themeToggle=document.getElementById('themeToggle');
+themeToggle.onclick=()=>{
+    document.body.classList.toggle('light');
+    document.body.classList.toggle('dark');
+};
+
+// ---------- Font size (simple) ----------
+let baseSize=16;
+function setFontSize(){document.documentElement.style.fontSize=baseSize+'px';}
+setFontSize();
+
+// Simple handler for “حجم الخط” – future improvement
+document.querySelectorAll('[data-action="font"]').forEach(el=>{
+    el.onclick=()=> {
+        const delta=prompt('أدخل قيمه (+ أو -) لتكبير/تصغير الخط (مثال: +2 أو -2) :');
+        if(delta){
+            const val=parseInt(delta);
+            if(!isNaN(val)) {
+                baseSize+=val;
+                setFontSize();
+            }
+        }
+    };
+});
+
+// ---------- Language switch placeholder ----------
+document.querySelectorAll('[data-action="lang"]').forEach(el=>{
+    el.onclick=()=>alert('خاصية تبديل اللغة ستُضاف لاحقاً');
+});
+
+// ---------- Gallery & Pages placeholders ----------
+document.querySelectorAll('[data-action="gallery"],[data-action="pages"]')
+    .forEach(el=>el.onclick=()=>alert('ملف المعرض / الصفحات سيُضاف لاحقاً'));
+</script>
+
 </body>
 </html>
