@@ -4,327 +4,143 @@
 <meta charset="UTF-8">
 <title>AHMED DESIGN</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- استدعاء خط فخم جداً (Cairo) -->
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;800;900&display=swap" rel="stylesheet">
 
 <style>
-/* ==== خلفية متحركة 3D فخمة جداً ==== */
+/* ==== الخلفية المتحركة والجسيمات العائمة ==== */
 @keyframes gradientAnimation {
     0% { background-position: 0% 50%; }
     50% { background-position: 100% 50%; }
     100% { background-position: 0% 50%; }
 }
+
+@keyframes floatOrbs {
+    0% { transform: translateY(0px) scale(1); }
+    50% { transform: translateY(-30px) scale(1.1); }
+    100% { transform: translateY(0px) scale(1); }
+}
+
 body {
     margin: 0;
-    font-family: 'Segoe UI', Tahoma, sans-serif;
+    font-family: 'Cairo', sans-serif;
     color: #fff;
-    background: linear-gradient(-45deg, #000000, #1a0033, #4b0082, #2e0854, #ffd700);
+    background: linear-gradient(-45deg, #05000a, #1a0033, #3b0066, #120024, #1f0036);
     background-size: 400% 400%;
-    animation: gradientAnimation 8s ease infinite;
+    animation: gradientAnimation 12s ease infinite;
     overflow-x: hidden;
 }
 
-.container { max-width: 1200px; margin: auto; padding: 1rem; }
+/* دوائر عائمة في الخلفية (حاجات طالعة ونازلة) */
+.bg-orbs {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    overflow: hidden; z-index: -1; pointer-events: none;
+}
+.orb {
+    position: absolute; border-radius: 50%; filter: blur(60px); opacity: 0.4;
+    animation: floatOrbs 8s ease-in-out infinite;
+}
+.orb1 { width: 300px; height: 300px; background: #8a2be2; top: 10%; left: 10%; animation-delay: 0s; }
+.orb2 { width: 350px; height: 350px; background: #ffd700; bottom: 10%; right: 10%; animation-delay: 3s; opacity: 0.25; }
+.orb3 { width: 250px; height: 250px; background: #4b0082; top: 50%; left: 60%; animation-delay: 5s; }
+
+.container { max-width: 1200px; margin: auto; padding: 1rem; position: relative; z-index: 2; }
 .flex { display: flex; align-items: center; gap: 1rem; }
 
-/* ==== الهيدر والقائمة ==== */
 header {
-    position: fixed;
-    top: 0; left: 0; right: 0;
+    position: fixed; top: 0; left: 0; right: 0;
     padding: 1rem 2rem;
-    background: rgba(0,0,0,0.6);
-    backdrop-filter: blur(10px);
-    z-index: 100;
+    background: rgba(5, 0, 10, 0.75);
+    backdrop-filter: blur(12px);
+    z-index: 1000;
+    border-bottom: 1px solid rgba(255, 215, 0, 0.15);
 }
-.logo { font-size: 1.8rem; font-weight: 900; color: #ffd700; }
+.logo { font-size: 1.7rem; font-weight: 900; color: #ffd700; text-shadow: 0 0 10px rgba(255,215,0,0.5); }
+
+/* شاشة الترحيب */
 .welcome {
     position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-    background: rgba(0,0,0,0.95);
+    background: #05000a;
     display: flex; flex-direction: column; justify-content: center; align-items: center;
-    z-index: 999;
-    font-size: 2.2rem; text-align: center; color: #fff;
-    transition: opacity 0.8s ease;
+    z-index: 9999; font-size: 2.2rem; text-align: center; color: #fff;
+    transition: opacity 0.6s ease, visibility 0.6s ease;
 }
-.welcome .sub { font-size: 1.2rem; color: #ffd700; margin-top: 10px; }
-.greet { font-size: 2rem; margin-left: .5rem; }
+.welcome.fade-out { opacity: 0; visibility: hidden; pointer-events: none; }
+.welcome .sub { font-size: 1.2rem; color: #ffd700; margin-top: 10px; font-weight: 600; }
+.greet { font-size: 1.8rem; margin-left: .5rem; }
 
-/* ==== زر الثلاث نقاط والقائمة الجانبية ==== */
+/* زر القائمة */
 .menu-btn {
-    position: fixed; top: 1.2rem; left: 1.2rem;
-    width: 2.8rem; height: 2.8rem;
-    background: rgba(0,0,0,0.7);
+    position: fixed; top: 1.2rem; right: 1.2rem;
+    width: 3rem; height: 3rem;
+    background: rgba(20, 5, 35, 0.85);
     border: 1px solid #ffd700;
     border-radius: 50%;
     display: flex; justify-content: center; align-items: center;
-    cursor: pointer; z-index: 101;
+    cursor: pointer; z-index: 1002;
+    box-shadow: 0 0 10px rgba(255,215,0,0.3);
 }
-.menu-btn span { width: 6px; height: 6px; background: #ffd700; border-radius: 50%; margin: 2px; }
+.menu-btn span { width: 5px; height: 5px; background: #ffd700; border-radius: 50%; margin: 2px; }
 
+/* القائمة الجانبية */
 #drawer {
-    position: fixed; top: 0; bottom: 0; left: -280px; width: 280px;
-    background: rgba(15, 5, 25, 0.95);
-    backdrop-filter: blur(10px);
-    transition: left .3s ease;
-    z-index: 102;
-    padding-top: 5rem;
-    border-right: 1px solid #ffd700;
+    position: fixed; top: 0; bottom: 0; right: -300px; width: 280px;
+    background: rgba(12, 2, 22, 0.98);
+    backdrop-filter: blur(15px);
+    transition: right .35s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 1003; padding-top: 5rem;
+    border-left: 1px solid rgba(255, 215, 0, 0.3);
+    box-shadow: -5px 0 25px rgba(0,0,0,0.8);
 }
-#drawer.show { left: 0; }
+#drawer.show { right: 0; }
 #drawer ul { list-style: none; padding: 0; margin: 0; }
 #drawer li {
-    padding: 1.2rem 1.5rem;
-    border-bottom: 1px solid rgba(255,215,0,0.2);
-    cursor: pointer;
-    font-weight: 600;
-    color: #fff;
+    padding: 1.3rem 1.5rem;
+    border-bottom: 1px solid rgba(255,215,0,0.15);
+    cursor: pointer; font-weight: 700; color: #fff;
+    transition: 0.2s;
 }
-#drawer li:hover { background: rgba(255,215,0,0.15); color: #ffd700; }
+#drawer li:hover { background: rgba(255,215,0,0.15); color: #ffd700; padding-right: 1.8rem; }
 
-/* ==== الأقسام والكروت ==== */
 section { min-height: 100vh; padding: 7rem 1rem 2rem; }
-section h2 { font-size: 2rem; color: #ffd700; margin-bottom: 1rem; }
+section h2 { font-size: 2.2rem; color: #ffd700; margin-bottom: 1rem; font-weight: 800; text-shadow: 0 0 15px rgba(255,215,0,0.3); }
+
 .card {
-    background: rgba(0, 0, 0, 0.6);
-    border: 1px solid rgba(255,215,0,0.3);
-    border-radius: 12px;
-    padding: 1.5rem;
-    margin-bottom: 1.5rem;
-    backdrop-filter: blur(5px);
+    background: rgba(15, 5, 25, 0.65);
+    border: 1px solid rgba(255, 215, 0, 0.25);
+    border-radius: 16px; padding: 2rem; margin-bottom: 1.5rem;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
 }
-section textarea, section input {
-    width: 100%; padding: 0.9rem; margin: 0.5rem 0;
-    background: rgba(255,255,255,0.1);
-    border: 1px solid #444; color: #fff;
-    border-radius: 6px; outline: none;
+section textarea, section input[type="text"] {
+    width: 100%; padding: 1rem; margin: 0.6rem 0;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 215, 0, 0.3); color: #fff;
+    border-radius: 8px; outline: none; font-family: 'Cairo', sans-serif;
+    box-sizing: border-box; transition: 0.3s;
 }
+section input[type="text"]:focus, section textarea:focus {
+    border-color: #ffd700; box-shadow: 0 0 10px rgba(255,215,0,0.2);
+}
+
+/* تصميم زر رفع الملفات والزرار العادي */
+.file-upload-wrapper {
+    position: relative; overflow: hidden; display: inline-block; width: 100%;
+}
+.file-upload-wrapper input[type="file"] {
+    position: absolute; left: 0; top: 0; opacity: 0; width: 100%; height: 100%; cursor: pointer;
+}
+.custom-file-btn {
+    display: block; width: 100%; padding: 1rem;
+    background: rgba(255, 215, 0, 0.1); border: 2px dashed #ffd700;
+    color: #ffd700; text-align: center; border-radius: 8px; font-weight: 700;
+    cursor: pointer; transition: 0.3s; box-sizing: border-box;
+}
+.custom-file-btn:hover { background: rgba(255, 215, 0, 0.2); }
+
 section button {
-    background: #ffd700; color: #000; font-weight: bold;
-    padding: 0.8rem 1.5rem; border: none; border-radius: 6px; cursor: pointer;
-    margin-top: 5px;
-}
-section button:hover { background: #ffea75; }
-
-/* ==== معرض الصور (Gallery) ==== */
-.gallery-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-    gap: 1rem;
-    margin-top: 1rem;
-}
-.gallery-item {
-    height: 150px;
-    border-radius: 8px;
-    overflow: hidden;
-    border: 2px solid #ffd700;
-    background: #222;
-}
-.gallery-item img {
-    width: 100%; height: 100%; object-fit: cover;
-}
-
-/* ==== الفوتر ==== */
-footer {
-    background: #050505; text-align: center; padding: 2rem 1rem; border-top: 1px solid #333;
-}
-footer a { color: #00ff66; text-decoration: none; font-weight: bold; font-size: 1.1rem; }
-
-/* ==== الوضع الفاتح ==== */
-body.light { color: #111; background: linear-gradient(-45deg, #f5f5f5, #e2d1f9, #d4af37, #ffffff); background-size: 400% 400%; animation: gradientAnimation 8s ease infinite; }
-body.light header { background: rgba(255,255,255,0.8); }
-body.light #drawer { background: rgba(245,245,245,0.95); color: #000; }
-body.light #drawer li { color: #000; border-bottom: 1px solid #ddd; }
-body.light .card { background: rgba(255,255,255,0.85); color: #111; border: 1px solid #d4af37; }
-body.light section textarea, body.light section input { background: #fff; color: #000; border: 1px solid #ccc; }
-</style>
-</head>
-
-<body class="dark">
-
-<!-- شاشة الترحيب -->
-<div class="welcome" id="welcome">
-    <div id="wText1">أهلاً بكم في <strong>AHMED DESIGN</strong></div>
-    <div class="sub" id="wText2">Welcome to AHMED DESIGN</div>
-</div>
-
-<!-- زر القائمة (3 نقاط) -->
-<div class="menu-btn" id="menuBtn">
-    <span></span><span></span><span></span>
-</div>
-
-<!-- القائمة الجانبية -->
-<nav id="drawer">
-    <ul>
-        <li id="langMenuText" data-action="lang">🈳 تغيير اللغة (English)</li>
-        <li id="themeMenuText" data-action="theme">🌗 وضع الإضاءة</li>
-        <li id="fontMenuText" data-action="font">🔡 حجم الخط</li>
-        <li id="galleryMenuText" data-action="gallery">🖼️ معرض الصور</li>
-    </ul>
-</nav>
-
-<!-- الهيدر -->
-<header class="flex">
-    <div class="logo">AHMED DESIGN</div>
-    <div class="flex" style="margin-right:auto;">
-        <span id="helloText">Hello</span><span class="greet">👋</span>
-    </div>
-</header>
-
-<!-- المحتوى الرئيسي -->
-<main class="container">
-
-<!-- 1. طلب تصميم -->
-<section id="request">
-    <h2 id="reqTitle">طلب تصميم</h2>
-    <div class="card">
-        <p id="reqDesc">أرسل طلبك وسنقوم بتنفيذه بأعلى جودة.</p>
-        <input type="text" id="inputTitle" placeholder="عنوان التصميم">
-        <textarea rows="4" id="inputDesc" placeholder="اكتب تفاصيل طلبك هنا..."></textarea>
-        <button id="reqBtn">إرسال الطلب</button>
-    </div>
-</section>
-
-<!-- 2. اختيار تصميم (معرض الصور) -->
-<section id="choose">
-    <h2 id="chooseTitle">اختيار تصميم</h2>
-    <div class="card">
-        <p id="chooseDesc">تصفح بعض أعمالي السابقة:</p>
-        <div class="gallery-grid">
-            <!-- تقدر تغير روابط الصور دي بروابط صورك الحقيقية أو أسماء الصور اللي هترفعها -->
-            <div class="gallery-item"><img src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=500" alt="Design 1"></div>
-            <div class="gallery-item"><img src="https://images.unsplash.com/photo-1634017839464-5c339ebe3cb4?w=500" alt="Design 2"></div>
-            <div class="gallery-item"><img src="https://images.unsplash.com/photo-1618172193763-c511deb635ca?w=500" alt="Design 3"></div>
-        </div>
-    </div>
-</section>
-
-<!-- 3. وضع تصميم -->
-<section id="upload">
-    <h2 id="uploadTitle">رفع تصميم أعجبك</h2>
-    <div class="card">
-        <p id="uploadDesc">ارفع صورة تصميم أعجبك في مكان آخر لنصمم مثله:</p>
-        <input type="file" accept="image/*">
-        <button id="uploadBtn">رفع الصورة</button>
-    </div>
-</section>
-
-</main>
-
-<!-- الفوتر -->
-<footer>
-    <a href="https://wa.me/201122160714" target="_blank">
-        💬 استفسار عبر واتساب: 01122160714
-    </a>
-</footer>
-
-<script>
-// إخفاء شاشة الترحيب بعد ثانيتين
-setTimeout(() => {
-    const w = document.getElementById('welcome');
-    w.style.opacity = 0;
-    setTimeout(() => w.remove(), 800);
-}, 2000);
-
-// فتح وغلق القائمة الجانبية
-const menuBtn = document.getElementById('menuBtn');
-const drawer = document.getElementById('drawer');
-menuBtn.onclick = () => drawer.classList.toggle('show');
-
-// تبديل الوضع (داكن / فاتح)
-document.querySelectorAll('[data-action="theme"]').forEach(el => {
-    el.onclick = () => {
-        document.body.classList.toggle('light');
-        drawer.classList.remove('show');
-    };
-});
-
-// تغيير حجم الخط
-document.querySelectorAll('[data-action="font"]').forEach(el => {
-    el.onclick = () => {
-        const val = prompt('أدخل قيمة لتكبير/تصغير الخط (مثال: +2 أو -2):', '+2');
-        if (val) {
-            let currentSize = parseFloat(window.getComputedStyle(document.body).fontSize);
-            document.body.style.fontSize = (currentSize + parseInt(val)) + 'px';
-        }
-        drawer.classList.remove('show');
-    };
-});
-
-// الذهاب لمعرض الصور عند الضغط عليه من القائمة
-document.querySelectorAll('[data-action="gallery"]').forEach(el => {
-    el.onclick = () => {
-        document.getElementById('choose').scrollIntoView({ behavior: 'smooth' });
-        drawer.classList.remove('show');
-    };
-});
-
-// نظام ترجمة حقيقي (عربي / إنجليزي)
-let currentLang = 'ar';
-const translations = {
-    ar: {
-        langText: "🈳 Switch to English",
-        themeText: "🌗 وضع الإضاءة",
-        fontText: "🔡 حجم الخط",
-        galleryText: "🖼️ معرض الصور",
-        hello: "Hello",
-        reqTitle: "طلب تصميم",
-        reqDesc: "أرسل طلبك وسنقوم بتنفيذه بأعلى جودة.",
-        inputTitle: "عنوان التصميم",
-        inputDesc: "اكتب تفاصيل طلبك هنا...",
-        reqBtn: "إرسال الطلب",
-        chooseTitle: "اختيار تصميم",
-        chooseDesc: "تصفح بعض أعمالي السابقة:",
-        uploadTitle: "رفع تصميم أعجبك",
-        uploadDesc: "ارفع صورة تصميم أعجبك في مكان آخر لنصمم مثله:",
-        uploadBtn: "رفع الصورة"
-    },
-    en: {
-        langText: "🈳 التحويل إلى العربية",
-        themeText: "🌗 Toggle Theme",
-        fontText: "🔡 Font Size",
-        galleryText: "🖼️ Gallery",
-        hello: "Hello",
-        reqTitle: "Request Design",
-        reqDesc: "Send your request and we will implement it with high quality.",
-        inputTitle: "Design Title",
-        inputDesc: "Write your request details here...",
-        reqBtn: "Send Request",
-        chooseTitle: "Choose Design",
-        chooseDesc: "Browse some of my previous work:",
-        uploadTitle: "Upload Inspiration",
-        uploadDesc: "Upload an image of a design you liked to create a similar one:",
-        uploadBtn: "Upload Image"
-    }
-};
-
-document.querySelectorAll('[data-action="lang"]').forEach(el => {
-    el.onclick = () => {
-        currentLang = currentLang === 'ar' ? 'en' : 'ar';
-        const t = translations[currentLang];
-        
-        document.getElementById('htmlRoot').setAttribute('lang', currentLang);
-        document.getElementById('htmlRoot').setAttribute('dir', currentLang === 'ar' ? 'rtl' : 'ltr');
-        
-        document.getElementById('langMenuText').innerText = t.langText;
-        document.getElementById('themeMenuText').innerText = t.themeText;
-        document.getElementById('fontMenuText').innerText = t.fontText;
-        document.getElementById('galleryMenuText').innerText = t.galleryText;
-        document.getElementById('helloText').innerText = t.hello;
-        
-        document.getElementById('reqTitle').innerText = t.reqTitle;
-        document.getElementById('reqDesc').innerText = t.reqDesc;
-        document.getElementById('inputTitle').placeholder = t.inputTitle;
-        document.getElementById('inputDesc').placeholder = t.inputDesc;
-        document.getElementById('reqBtn').innerText = t.reqBtn;
-        
-        document.getElementById('chooseTitle').innerText = t.chooseTitle;
-        document.getElementById('chooseDesc').innerText = t.chooseDesc;
-        
-        document.getElementById('uploadTitle').innerText = t.uploadTitle;
-        document.getElementById('uploadDesc').innerText = t.uploadDesc;
-        document.getElementById('uploadBtn').innerText = t.uploadBtn;
-
-        drawer.classList.remove('show');
-    };
-});
-</script>
-
-</body>
-</html>
+    background: linear-gradient(135deg, #ffd700, #ffa500); color: #000; font-weight: 800;
+    padding: 1rem 2rem; border: none; border-radius: 8px; cursor: pointer;
+    margin-top: 10px; font-family: 'Cairo', sans-serif; width: 100%;
+    box-shadow: 0 4px 15px rgba(255,215,0,
+    
