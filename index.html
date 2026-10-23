@@ -1,383 +1,328 @@
-<!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<!doctype html>
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SOUN | مستقبل الموضة والأحذية ثلاثية الأبعاد</title>
-    <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- FontAwesome Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Google Fonts (Cairo) -->
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&display=swap" rel="stylesheet">
-    <!-- Three.js for 3D Background -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <meta charset="utf-8" />
+  <title>soun - 3D Website</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <!-- Three.js CDN -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  
+  <style>
+    :root {
+      --bg: #0a0a0a;
+      --fg: #e9e9e9;
+      --muted: #b0b0b0;
+      --accent: #7bd9ff;
+    }
+    * { box-sizing: border-box; }
+    html, body { height: 100%; }
+    body {
+      margin: 0;
+      font-family: Inter, system-ui, Arial, sans-serif;
+      color: var(--fg);
+      background: var(--bg);
+      overflow-x: hidden;
+    }
+    .site-header {
+      position: fixed; top: 0; left: 0; right: 0;
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 1rem; padding: 1rem 1.25rem; z-index: 10;
+      background: rgba(0,0,0,0.25);
+      backdrop-filter: saturate(1.2) blur(4px);
+    }
+    .brand { font-weight: 700; letter-spacing: .5px; }
+    .main-nav { display: flex; gap: .75rem; }
+    .main-nav a { color: #ddd; text-decoration: none; padding: .5rem; border-radius: 6px; }
+    .main-nav a:hover { background: rgba(255,255,255,0.08); }
+    .scene-switch { display: flex; gap: .5rem; }
+    .btn { background: rgba(255,255,255,0.08); color: #fff; border: 1px solid rgba(255,255,255,0.18);
+      padding: .45rem .75rem; border-radius: 6px; cursor: pointer; font-size: 0.9rem;
+    }
+    .btn:hover { background: rgba(255,255,255,0.14); }
 
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: {
-                        cairo: ['Cairo', 'sans-serif'],
-                    },
-                    colors: {
-                        brand: {
-                            dark: '#0a0a0c',
-                            card: '#121218',
-                            accent: '#d4af37', /* Gold accent */
-                            neon: '#00f2fe',
-                        }
-                    }
-                }
-            }
-        }
-    </script>
-    <style>
-        body {
-            font-family: 'Cairo', sans-serif;
-            background-color: #0a0a0c;
-            color: #f3f4f6;
-            overflow-x: hidden;
-        }
-        #canvas3d {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            z-index: -1;
-            pointer-events: none;
-        }
-        .glass-panel {
-            background: rgba(18, 18, 24, 0.75);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(212, 175, 55, 0.2);
-        }
-        .product-card:hover {
-            transform: translateY(-8px) scale(1.02);
-            box-shadow: 0 20px 40px rgba(0, 242, 254, 0.15);
-        }
-        ::-webkit-scrollbar {
-            width: 8px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #0a0a0c;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #d4af37;
-            border-radius: 4px;
-        }
-    </style>
+    .home-shell { min-height: 100%; width: 100%; }
+
+    .hero { position: relative; height: 90vh; min-height: 520px; width: 100%; overflow: hidden; }
+    .bg-canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+    .hero-overlay {
+      position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%);
+      text-align: center; padding: 1rem; max-width: 800px;
+      z-index: 2;
+    }
+    .hero-overlay h1 { font-size: clamp(2rem, 4vw, 4rem); margin: 0 0 .5rem; text-shadow: 0 2px 8px rgba(0,0,0,.5); }
+    .hero-overlay p { color: var(--muted); margin: 0 0 1rem; }
+    .cta-row { display: flex; gap: .75rem; justify-content: center; }
+    .cta { background: var(--accent); color: #000; border: none; padding: .6rem 1.2rem; border-radius: 6px; font-weight: 600; cursor: pointer; }
+    .cta:hover { opacity: 0.9; }
+
+    .content-section { padding: 6rem 1rem; max-width: 1100px; margin: 0 auto; }
+    .content-section h2 { font-size: 2rem; margin-bottom: .75rem; }
+    .features-list { display: grid; grid-template-columns: 1fr 1fr; gap: .75rem; list-style: none; padding: 0; margin: .5rem 0 0; }
+    .features-list li { padding: .5rem 0; border-bottom: 1px solid rgba(255,255,255,.08); }
+
+    .gallery-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: .75rem; margin-top: 1rem; }
+    .gallery-grid .thumb { background: #1a1a1a; height: 120px; border-radius: 6px; border: 1px solid rgba(255,255,255,.08); }
+
+    .contact-form { display: grid; grid-template-columns: 1fr 1fr; gap: .75rem; }
+    .contact-form label { display: flex; flex-direction: column; gap: .25rem; }
+    .contact-form input, .contact-form textarea {
+      padding: .6rem .7rem; border-radius: 6px; border: 1px solid rgba(255,255,255,.25);
+      background: rgba(0,0,0,.3); color: #fff;
+    }
+    .site-footer { padding: 2rem; text-align: center; color: #aaa; border-top: 1px solid rgba(255,255,255,.08); margin-top: 2rem; }
+
+    @media (max-width: 900px) {
+      .features-list { grid-template-columns: 1fr; }
+      .contact-form { grid-template-columns: 1fr; }
+      .gallery-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 520px) {
+      .gallery-grid { grid-template-columns: 1fr; }
+      .main-nav { display: none; }
+      .hero-overlay { padding: 0 1rem; }
+    }
+  </style>
 </head>
-<body class="bg-brand-dark min-h-screen flex flex-col">
-
-    <!-- Three.js 3D Background Canvas -->
-    <canvas id="canvas3d"></canvas>
-
-    <!-- Top Announcement Bar -->
-    <div class="bg-gradient-to-r from-yellow-600 via-amber-500 to-yellow-600 text-brand-dark text-xs sm:text-sm py-2 px-4 text-center font-bold tracking-wider shadow-md">
-        ✨ أحدث صيحات الموضة والأحذية لجميع الأجسام والبشرات | استفسارات المبيعات والدعم: <span dir="ltr" class="inline-block bg-brand-dark text-amber-400 px-2 py-0.5 rounded mx-1">01122160714</span> ✨
+<body>
+  <header class="site-header" aria-label="Site header">
+    <div class="brand" aria-label="Site brand">soun</div>
+    <nav class="main-nav" aria-label="Main navigation">
+      <a href="#about">About</a>
+      <a href="#features">Features</a>
+      <a href="#gallery">Gallery</a>
+      <a href="#contact">Contact</a>
+    </nav>
+    <div class="scene-switch" aria-label="Switch background scene">
+      <button data-scene="nebula" class="btn" title="Nebula scene">Nebula</button>
+      <button data-scene="morph" class="btn" title="Morphing shapes">Morph</button>
+      <button data-scene="tunnel" class="btn" title="Rotating tunnel">Tunnel</button>
     </div>
+  </header>
 
-    <!-- Navigation Bar -->
-    <header class="sticky top-0 z-50 glass-panel border-b border-gray-800 transition-all duration-300">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
-            <!-- Logo -->
-            <a href="#" class="flex items-center gap-3 group">
-                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-yellow-500 to-cyan-400 flex items-center justify-center text-brand-dark font-black text-2xl shadow-lg group-hover:rotate-12 transition-transform">
-                    S
-                </div>
-                <span class="text-2xl font-black tracking-widest text-white uppercase bg-gradient-to-r from-white via-gray-200 to-amber-400 bg-clip-text text-transparent">
-                    SOUN
-                </span>
-            </a>
-
-            <!-- Nav Links -->
-            <nav class="hidden md:flex items-center gap-8 font-semibold text-gray-300">
-                <a href="#home" class="hover:text-amber-400 transition-colors">الرئيسية</a>
-                <a href="#shop" class="hover:text-amber-400 transition-colors">التشكيلة الكاملة</a>
-                <a href="#inclusivity" class="hover:text-amber-400 transition-colors">المقاسات والبشرة</a>
-                <a href="#about" class="hover:text-amber-400 transition-colors">عن SOUN</a>
-                <a href="#contact" class="hover:text-amber-400 transition-colors">تواصل معنا</a>
-            </nav>
-
-            <!-- Actions -->
-            <div class="flex items-center gap-4">
-                <button onclick="toggleCart()" class="relative p-2.5 rounded-xl bg-gray-800/80 hover:bg-gray-700 text-amber-400 border border-gray-700 transition-all shadow-inner">
-                    <i class="fa-solid fa-bag-shopping text-lg"></i>
-                    <span id="cart-count" class="absolute -top-1 -right-1 bg-cyan-500 text-brand-dark text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center shadow">0</span>
-                </button>
-                <a href="tel:01122160714" class="hidden sm:flex items-center gap-2 bg-gradient-to-r from-amber-500 to-yellow-600 hover:from-amber-400 hover:to-yellow-500 text-brand-dark font-bold px-4 py-2.5 rounded-xl shadow-lg transition-all transform hover:scale-105">
-                    <i class="fa-solid fa-phone"></i>
-                    <span>01122160714</span>
-                </a>
-            </div>
+  <main id="home" class="home-shell" aria-label="Main content">
+    <section class="hero" aria-label="3D hero section">
+      <canvas id="bg" class="bg-canvas"></canvas>
+      <div class="hero-overlay">
+        <h1>Welcome to soun</h1>
+        <p>Immersive 3D experiences with interactive backgrounds</p>
+        <div class="cta-row">
+          <button class="cta" data-action="learn">Explore features</button>
+          <button class="cta" data-action="contact">Get in touch</button>
         </div>
-    </header>
-
-    <!-- Hero Section -->
-    <section id="home" class="relative min-h-[85vh] flex items-center justify-center text-center px-4 py-20">
-        <div class="max-w-4xl mx-auto space-y-8 z-10">
-            <span class="inline-block py-1.5 px-4 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 text-sm font-semibold tracking-wider uppercase backdrop-blur-md">
-                ✨ عالم الموضة ثلاثي الأبعاد بلا حدود
-            </span>
-            <h1 class="text-4xl sm:text-6xl lg:text-7xl font-black tracking-tight leading-tight">
-                أناقة تليق <span class="bg-gradient-to-r from-amber-400 via-yellow-200 to-cyan-400 bg-clip-text text-transparent">بكل البشر</span> وبجميع المقاسات
-            </h1>
-            <p class="text-lg sm:text-xl text-gray-300 max-w-2xl mx-auto font-light leading-relaxed">
-                اكتشف تشكيلة SOUN الحصرية من الملابس والأحذية المصممة خصيصاً لتناسب كل ألوان البشرة وكل المقاسات من الصغير إلى الضخم (XS حتى 4XL)، بمعاينة ثلاثية الأبعاد فائقة الدقة.
-            </p>
-            <div class="flex flex-wrap justify-center gap-4 pt-4">
-                <a href="#shop" class="bg-gradient-to-r from-amber-500 to-yellow-600 text-brand-dark font-extrabold px-8 py-4 rounded-xl shadow-2xl hover:shadow-amber-500/25 transition-all transform hover:-translate-y-1">
-                    تسوق التشكيلة الآن
-                </a>
-                <a href="tel:01122160714" class="glass-panel text-white hover:text-amber-400 font-bold px-8 py-4 rounded-xl transition-all border border-gray-700 flex items-center gap-2">
-                    <i class="fa-solid fa-headset text-amber-400"></i> اطلب استشارة فورية
-                </a>
-            </div>
-        </div>
+      </div>
     </section>
 
-    <!-- Inclusivity Highlight Section -->
-    <section id="inclusivity" class="py-16 px-4 bg-brand-card/50 border-y border-gray-800">
-        <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
-            <div class="p-8 rounded-2xl glass-panel border border-gray-800">
-                <div class="w-16 h-16 mx-auto mb-4 rounded-2xl bg-amber-500/10 text-amber-400 flex items-center justify-center text-3xl">
-                    <i class="fa-solid fa-shirt"></i>
-                </div>
-                <h3 class="text-xl font-bold mb-2 text-white">كل المقاسات متاحة</h3>
-                <p class="text-gray-400 text-sm">تصاميم مدروسة بعناية لتناسب القوام النحيف، الممتلئ، وكل المقاسات الخاصة من XS حتى 4XL.</p>
-            </div>
-            <div class="p-8 rounded-2xl glass-panel border border-gray-800">
-                <div class="w-16 h-16 mx-auto mb-4 rounded-2xl bg-cyan-500/10 text-cyan-400 flex items-center justify-center text-3xl">
-                    <i class="fa-solid fa-users"></i>
-                </div>
-                <h3 class="text-xl font-bold mb-2 text-white">لكل ألوان البشرة</h3>
-                <p class="text-gray-400 text-sm">لوحة ألوان ومنتجات متكاملة تتناغم برقي مع درجات البشرة المختلفة لتظهر بأبهى حلة.</p>
-            </div>
-            <div class="p-8 rounded-2xl glass-panel border border-gray-800">
-                <div class="w-16 h-16 mx-auto mb-4 rounded-2xl bg-yellow-500/10 text-yellow-400 flex items-center justify-center text-3xl">
-                    <i class="fa-solid fa-cube"></i>
-                </div>
-                <h3 class="text-xl font-bold mb-2 text-white">معاينة ثلاثية الأبعاد 3D</h3>
-                <p class="text-gray-400 text-sm">شاهد تفاصيل القماش وجودة الحياكة وتصميم الأحذية بزاوية 360 درجة كأنك في المعرض الحقيقي.</p>
-            </div>
-        </div>
+    <section id="about" class="content-section" aria-label="About">
+      <h2>About soun</h2>
+      <p>soun is a modern 3D-first website template designed to showcase immersive scenes and interactive experiences. It uses a modular scene system built on top of Three.js to render dynamic backgrounds, while keeping clean, accessible HTML content for marketing copy and UI controls.</p>
     </section>
 
-    <!-- Shop Catalog Section -->
-    <section id="shop" class="py-20 px-4 max-w-7xl mx-auto flex-grow w-full">
-        <div class="flex flex-col md:flex-row justify-between items-center mb-12 gap-6">
-            <div>
-                <h2 class="text-3xl sm:text-4xl font-black text-white mb-2">تشكيلة SOUN العالمية</h2>
-                <p class="text-gray-400">أحدث صيحات الموضة للأحذية والملابس الفاخرة</p>
-            </div>
-
-            <!-- Category Filters -->
-            <div class="flex flex-wrap gap-2 bg-gray-900/80 p-1.5 rounded-2xl border border-gray-800">
-                <button onclick="filterProducts('all')" class="filter-btn px-5 py-2 rounded-xl text-sm font-bold bg-amber-500 text-brand-dark transition-all">الكل</button>
-                <button onclick="filterProducts('shoes')" class="filter-btn px-5 py-2 rounded-xl text-sm font-bold text-gray-300 hover:text-white transition-all">أحذية 3D</button>
-                <button onclick="filterProducts('clothes')" class="filter-btn px-5 py-2 rounded-xl text-sm font-bold text-gray-300 hover:text-white transition-all">ملابس عصرية</button>
-                <button onclick="filterProducts('plus')" class="filter-btn px-5 py-2 rounded-xl text-sm font-bold text-gray-300 hover:text-white transition-all">مقاسات خاصة Plus</button>
-            </div>
-        </div>
-
-        <!-- Products Grid -->
-        <div id="products-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-            <!-- Dynamic JavaScript content will inject here -->
-        </div>
+    <section id="features" class="content-section" aria-label="Features">
+      <h2>Features</h2>
+      <ul class="features-list">
+        <li>Multiple 3D background themes with smooth transitions</li>
+        <li>Mouse, touch and device orientation interaction</li>
+        <li>Lightweight rendering with progressive enhancement</li>
+        <li>Contents overlay with accessible navigation</li>
+        <li>Easy to customize and extend with GLTF assets</li>
+      </ul>
     </section>
 
-    <!-- Cart Slide-over Drawer -->
-    <div id="cart-drawer" class="fixed inset-0 z-50 overflow-hidden hidden">
-        <div class="absolute inset-0 bg-black/70 backdrop-blur-sm transition-opacity" onclick="toggleCart()"></div>
-        <div class="absolute inset-y-0 left-0 max-w-full flex pl-10">
-            <div class="w-screen max-w-md bg-brand-card border-r border-gray-800 flex flex-col shadow-2xl">
-                <!-- Cart Header -->
-                <div class="p-6 border-b border-gray-800 flex items-center justify-between">
-                    <h3 class="text-xl font-bold text-white flex items-center gap-2">
-                        <i class="fa-solid fa-bag-shopping text-amber-400"></i> سلة التسوق الخاصة بك
-                    </h3>
-                    <button onclick="toggleCart()" class="text-gray-400 hover:text-white p-2">
-                        <i class="fa-solid fa-xmark text-xl"></i>
-                    </button>
-                </div>
-                <!-- Cart Items -->
-                <div id="cart-items" class="flex-1 overflow-y-auto p-6 space-y-4 divide-y divide-gray-800">
-                    <p class="text-gray-400 text-center py-12">سلة التسوق فارغة حالياً</p>
-                </div>
-                <!-- Cart Footer -->
-                <div class="p-6 border-t border-gray-800 bg-brand-dark/50 space-y-4">
-                    <div class="flex justify-between text-lg font-bold">
-                        <span class="text-gray-300">الإجمالي الكلي:</span>
-                        <span id="cart-total" class="text-amber-400">0.00 ج.م</span>
-                    </div>
-                    <button onclick="checkout()" class="w-full bg-gradient-to-r from-amber-500 to-yellow-600 hover:from-amber-400 hover:to-yellow-500 text-brand-dark font-black py-3.5 rounded-xl shadow-lg transition-all">
-                        إتمام الطلب عبر الهاتف أو الواتساب
-                    </button>
-                    <p class="text-xs text-center text-gray-500">للاستفسارات العاجلة اتصل بنا على: <span class="text-amber-400 font-bold" dir="ltr">01122160714</span></p>
-                </div>
-            </div>
-        </div>
-    </div>
+    <section id="gallery" class="content-section" aria-label="Gallery">
+      <h2>Gallery</h2>
+      <p>Preview samples of the 3D scenes and UI layouts. Replace this with your own assets as needed.</p>
+      <div class="gallery-grid" aria-label="Gallery grid placeholder">
+        <div class="thumb" title="Scene sample 1"></div>
+        <div class="thumb" title="Scene sample 2"></div>
+        <div class="thumb" title="Scene sample 3"></div>
+      </div>
+    </section>
 
-    <!-- Footer -->
-    <footer class="bg-brand-card border-t border-gray-800 py-12 px-4 mt-20">
-        <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
-            <div class="space-y-4">
-                <div class="flex items-center gap-3">
-                    <div class="w-8 h-8 rounded-lg bg-gradient-to-tr from-yellow-500 to-cyan-400 flex items-center justify-center text-brand-dark font-black text-xl">
-                        S
-                    </div>
-                    <span class="text-xl font-black text-white tracking-widest">SOUN</span>
-                </div>
-                <p class="text-gray-400 text-sm">الموقع الأول المتخصص في تقديم أحدث صيحات الموضة والأحذية ثلاثية الأبعاد الشاملة لكل المقاسات وألوان البشرة.</p>
-            </div>
-            <div>
-                <h4 class="text-white font-bold mb-4">روابط سريعة</h4>
-                <ul class="space-y-2 text-sm text-gray-400">
-                    <li><a href="#home" class="hover:text-amber-400 transition-colors">الرئيسية</a></li>
-                    <li><a href="#shop" class="hover:text-amber-400 transition-colors">التشكيلة الكاملة</a></li>
-                    <li><a href="#inclusivity" class="hover:text-amber-400 transition-colors">سياسة المقاسات والشمولية</a></li>
-                    <li><a href="#about" class="hover:text-amber-400 transition-colors">من نحن</a></li>
-                </ul>
-            </div>
-            <div>
-                <h4 class="text-white font-bold mb-4">خدمة العملاء والاستفسارات</h4>
-                <p class="text-sm text-gray-400 mb-2">تواصل معنا طوال أيام الأسبوع:</p>
-                <a href="tel:01122160714" class="inline-block text-amber-400 font-black text-lg tracking-wider bg-amber-500/10 px-4 py-2 rounded-xl border border-amber-500/20" dir="ltr">
-                    01122160714
-                </a>
-            </div>
-            <div>
-                <h4 class="text-white font-bold mb-4">النشرة البريدية</h4>
-                <p class="text-sm text-gray-400 mb-4">اشترك ليصلك كل جديد وعروض SOUN الحصرية.</p>
-                <div class="flex gap-2">
-                    <input type="email" placeholder="بريدك الإلكتروني" class="bg-brand-dark border border-gray-700 px-4 py-2 rounded-xl text-sm text-white focus:outline-none focus:border-amber-400 flex-1">
-                    <button onclick="alert('تم الاشتراك بنجاح في نشرة SOUN!')" class="bg-amber-500 hover:bg-amber-400 text-brand-dark px-4 py-2 rounded-xl font-bold text-sm">انضم</button>
-                </div>
-            </div>
-        </div>
-        <div class="max-w-7xl mx-auto pt-8 border-t border-gray-800 text-center text-sm text-gray-500">
-            جميع الحقوق محفوظة © 2026 موقع <span class="text-white font-bold">SOUN</span>. تصميم وصناعة المستقبل.
-        </div>
-    </footer>
+    <section id="contact" class="content-section" aria-label="Contact">
+      <h2>Contact</h2>
+      <form class="contact-form" aria-label="Contact form">
+        <label>Name<input type="text" name="name" required /></label>
+        <label>Email<input type="email" name="email" required /></label>
+        <label>Message<textarea name="message" rows="4" required></textarea></label>
+        <button type="submit" class="cta">Send message</button>
+      </form>
+    </section>
+  </main>
 
-    <!-- JavaScript Application Logic -->
-    <script>
-        // --- Three.js 3D Background Animation ---
-        const scene = new THREE.Scene();
-        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-        const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('canvas3d'), alpha: true, antialias: true });
-        
-        renderer.setSize(window.innerWidth, window.innerHeight);
-        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  <footer class="site-footer" aria-label="Footer">
+    <p>© <span id="year"></span> soun. All rights reserved.</p>
+  </footer>
 
-        // Create floating 3D geometric shapes representing fashion and modern design
-        const geometry = new THREE.IcosahedronGeometry(1, 0);
-        const material = new THREE.MeshStandardMaterial({
-            color: 0xd4af37,
-            wireframe: true,
-            roughness: 0.3,
-            metalness: 0.8
-        });
+  <script>
+    class SceneManager {
+      constructor(canvas) {
+        this.canvas = canvas;
+        this.renderer = null;
+        this.currentScene = null;
+        this.scenes = new Map();
+        this.initThree();
+        this.createScenes();
+        this.switchScene('nebula');
+        this.baseTime = performance.now();
+      }
 
-        const particlesGroup = new THREE.Group();
-        const shapesCount = 25;
-        const shapes = [];
+      initThree() {
+        const { innerWidth: w, innerHeight: h } = window;
+        this.renderer = new THREE.WebGLRenderer({ canvas: this.canvas, antialias: true, alpha: false });
+        this.renderer.setPixelRatio(window.devicePixelRatio);
+        this.renderer.setSize(w, h);
 
-        for (let i = 0; i < shapesCount; i++) {
-            const mesh = new THREE.Mesh(geometry, material);
-            mesh.position.set(
-                (Math.random() - 0.5) * 30,
-                (Math.random() - 0.5) * 30,
-                (Math.random() - 0.5) * 30
-            );
-            const scale = Math.random() * 1.5 + 0.5;
-            mesh.scale.set(scale, scale, scale);
-            mesh.rotationSpeed = {
-                x: (Math.random() - 0.5) * 0.01,
-                y: (Math.random() - 0.5) * 0.01
-            };
-            particlesGroup.add(mesh);
-            shapes.push(mesh);
+        this.scene = new THREE.Scene();
+        this.camera = new THREE.PerspectiveCamera(75, w / h, 0.1, 1000);
+        this.camera.position.z = 6;
+
+        const ambient = new THREE.AmbientLight(0xffffff, 0.75);
+        this.scene.add(ambient);
+        const dir = new THREE.DirectionalLight(0xffffff, 0.4);
+        dir.position.set(5, 5, 5);
+        this.scene.add(dir);
+      }
+
+      createScenes() {
+        // Nebula
+        const nebulaGroup = new THREE.Group();
+        const particleCount = 900;
+        const geometry = new THREE.BufferGeometry();
+        const positions = new Float32Array(particleCount * 3);
+        for (let i = 0; i < particleCount; i++) {
+          positions[i * 3 + 0] = (Math.random() - 0.5) * 40;
+          positions[i * 3 + 1] = (Math.random() - 0.5) * 40;
+          positions[i * 3 + 2] = (Math.random() - 0.5) * 40;
         }
+        geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+        const mat = new THREE.PointsMaterial({ color: 0x88ccff, size: 0.08, transparent: true, opacity: 0.9, sizeAttenuation: true });
+        const points = new THREE.Points(geometry, mat);
+        nebulaGroup.add(points);
+        this.scenes.set('nebula', { root: nebulaGroup, update: (t, dt) => {
+          points.rotation.y += 0.0004;
+          const pos = points.geometry.attributes.position.array;
+          for (let i = 0; i < particleCount; i++) {
+            pos[i*3+0] += Math.sin((i + t*0.001)*0.002) * 0.0002;
+            pos[i*3+1] += Math.cos((i + t*0.001)*0.002) * 0.0002;
+          }
+          points.geometry.attributes.position.needsUpdate = true;
+        }});
 
-        scene.add(particlesGroup);
-
-        // Add lighting
-        const ambientLight = new THREE.AmbientLight(0xffffff, 0.7);
-        scene.add(ambientLight);
-
-        const pointLight = new THREE.PointLight(0x00f2fe, 2, 50);
-        pointLight.position.set(10, 10, 10);
-        scene.add(pointLight);
-
-        camera.position.z = 15;
-
-        // Mouse interaction
-        let mouseX = 0;
-        let mouseY = 0;
-        window.addEventListener('mousemove', (e) => {
-            mouseX = (e.clientX / window.innerWidth) - 0.5;
-            mouseY = (e.clientY / window.innerHeight) - 0.5;
-        });
-
-        // Animation Loop
-        function animate() {
-            requestAnimationFrame(animate);
-
-            particlesGroup.rotation.y += 0.002 + (mouseX * 0.05);
-            particlesGroup.rotation.x += 0.001 + (mouseY * 0.05);
-
-            shapes.forEach(shape => {
-                shape.rotation.x += shape.rotationSpeed.x;
-                shape.rotation.y += shape.rotationSpeed.y;
-            });
-
-            renderer.render(scene, camera);
+        // Morph
+        const metaballGroup = new THREE.Group();
+        const metaballCount = 5;
+        const metaballs = [];
+        const metaballGeo = new THREE.IcosahedronGeometry(1, 2);
+        for (let i = 0; i < metaballCount; i++) {
+          const material = new THREE.MeshStandardMaterial({ color: new THREE.Color().setHSL(Math.random(), 0.8, 0.6), metalness: 0.2, roughness: 0.6 });
+          const mesh = new THREE.Mesh(metaballGeo, material);
+          mesh.position.set((Math.random() - 0.5) * 12, (Math.random() - 0.5) * 8, (Math.random() - 0.5) * 12);
+          mesh.scale.setScalar(Math.random() * 0.8 + 0.4);
+          metaballGroup.add(mesh);
+          metaballs.push(mesh);
         }
-        animate();
+        this.scenes.set('morph', { root: metaballGroup, update: (t, dt) => {
+          metaballs.forEach((m, idx) => {
+            m.rotation.x += 0.01 * (idx + 1);
+            m.rotation.y += 0.008 * (idx + 1);
+            const s = 0.8 + Math.sin((t * 0.001) + idx) * 0.2;
+            m.scale.setScalar(s * (0.8 + Math.abs(Math.sin(t * 0.001 + idx))));
+          });
+        }});
 
-        // Responsive Canvas
-        window.addEventListener('resize', () => {
-            camera.aspect = window.innerWidth / window.innerHeight;
-            camera.updateProjectionMatrix();
-            renderer.setSize(window.innerWidth, window.innerHeight);
-        });
+        // Tunnel
+        const tunnelGroup = new THREE.Group();
+        const ringGeom = new THREE.TorusGeometry(3.5, 0.8, 16, 64);
+        const ringMat = new THREE.MeshStandardMaterial({ color: 0x44aaff, emissive: 0x112233, metalness: 0.4, roughness: 0.2, side: THREE.BackSide, transparent: true, opacity: 0.85 });
+        const tunnelMesh = new THREE.Mesh(ringGeom, ringMat);
+        tunnelGroup.add(tunnelMesh);
+        tunnelGroup.rotation.y = Math.PI;
+        this.scenes.set('tunnel', { root: tunnelGroup, update: (t, dt) => {
+          tunnelMesh.rotation.x += 0.005;
+          tunnelMesh.rotation.y += 0.01;
+          tunnelMesh.material.emissiveIntensity = 0.5 + 0.5 * Math.sin(t * 0.002);
+        }});
+      }
 
-        // --- Products Database ---
-        const products = [
-            {
-                id: 1,
-                name: "حذاء SOUN 3D الفضائي التفاعلي",
-                category: "shoes",
-                price: 2450,
-                image: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=600&q=80",
-                sizes: ["38", "39", "40", "41", "42", "43", "44", "45", "46"],
-                description: "حذاء عصري بتصميم ثلاثي الأبعاد وراحة فائقة تناسب جميع ألوان البشرة والإطلالات."
-            },
-            {
-                id: 2,
-                name: "جاكيت جلد أورباني فاخر",
-                category: "clothes",
-                price: 3800,
-                image: "https://images.unsplash.com/photo-1551028719-00167b16eac5?auto=format&fit=crop&w=600&q=80",
-                sizes: ["S", "M", "L", "XL", "XXL"],
-                description: "مصنوع بأعلى خامات الجلد العصري الذي يتناغم مع مختلف درجات البشرة."
-            },
-            {
-                id: 3,
-                name: "هودي SOUN الشامل (مقاسات خاصة)",
-                category: "plus",
-                price: 1950,
-                image: "https://images.unsplash.com/photo-1556905055-8f358a7a47b2?auto=format&fit=crop&w=600&q=80",
-                sizes: ["XXL", "3XL", "4XL"],
-                description: "مصمم خصيصاً للمقاسات الكبيرة (Plus Size) براحة مطلقة وتصميم ثلاثي الأبعاد متميز."
-            },
-            {
-                id: 4,
-                name: "حذاء رياضي كلاسيك 3D رانر",
-                category: "shoes",
-                price: 2100,
-                image: "https://images.unsplash.com/photo-1608231387042-66d1773070a5?auto
+      switchScene(key) {
+        if (this.currentScene) {
+          this.scene.remove(this.currentScene.root);
+        }
+        const target = this.scenes.get(key);
+        if (target) {
+          this.currentScene = target;
+          this.scene.add(target.root);
+        }
+      }
+
+      resize() {
+        const w = window.innerWidth;
+        const h = window.innerHeight;
+        this.camera.aspect = w / h;
+        this.camera.updateProjectionMatrix();
+        this.renderer.setSize(w, h);
+      }
+
+      handlePointer(x, y) {
+        if (this.currentScene && this.currentScene.root) {
+          this.currentScene.root.rotation.y = (x - 0.5) * 0.5;
+          this.currentScene.root.rotation.x = (y - 0.5) * 0.5;
+        }
+      }
+
+      start() {
+        let lastTime = performance.now();
+        const loop = (time) => {
+          const dt = time - lastTime;
+          lastTime = time;
+          const t = time - this.baseTime;
+
+          if (this.currentScene && typeof this.currentScene.update === 'function') {
+            this.currentScene.update(t, dt);
+          }
+
+          this.renderer.render(this.scene, this.camera);
+          requestAnimationFrame(loop);
+        };
+        requestAnimationFrame(loop);
+      }
+    }
+
+    // Initialize Page
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    const canvas = document.getElementById('bg');
+    const sceneManager = new SceneManager(canvas);
+
+    document.querySelectorAll('[data-scene]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const key = btn.getAttribute('data-scene');
+        sceneManager.switchScene(key);
+      });
+    });
+
+    window.addEventListener('resize', () => sceneManager.resize(), { passive: true });
+
+    canvas.addEventListener('pointermove', (e) => {
+      const rect = canvas.getBoundingClientRect();
+      const x = (e.clientX - rect.left) / rect.width;
+      const y = (e.clientY - rect.top) / rect.height;
+      sceneManager.handlePointer(x, y);
+    });
+
+    canvas.addEventListener('touchmove', (e) => e.preventDefault(), { passive: false });
+
+    const learnBtn = document.querySelector('[data-action="learn"]');
+    if (learnBtn) learnBtn.addEventListener('click', () => {
+      document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' });
+    });
+
+    const contactBtn = document.querySelector('[data-action="contact"]');
+    if (contactBtn) contactBtn.addEventListener('click', () => {
+      document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' });
+    });
+
+    sceneManager.start();
+  </script>
+</body>
+</html>
