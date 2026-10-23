@@ -1,644 +1,383 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#101110">
-  <meta name="description"
-        content="SOUN — اكتشف الأحذية والملابس، واختَر إطلالتك. للاستفسارات: 01122160714">
-  <title>SOUN | أحذية وملابس</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SOUN | مستقبل الموضة والأحذية ثلاثية الأبعاد</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts (Cairo) -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+    <!-- Three.js for 3D Background -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 
-<style>
-    :root {
-      color-scheme: dark;
-      --bg: #101110;
-      --surface: #191b19;
-      --surface-2: #222522;
-      --text: #f4f5ee;
-      --muted: #afb5aa;
-      --line: #343a31;
-      --accent: #d4ff62;
-      --accent-ink: #192007;
-      --danger: #ff9898;
-      --header: rgba(16, 17, 16, .93);
-      --shadow: 0 24px 80px rgba(0, 0, 0, .25);
-      --radius: 24px;
-    }
-
-:root[data-theme="light"] {
-      color-scheme: light;
-      --bg: #f5f5ed;
-      --surface: #ffffff;
-      --surface-2: #eaece2;
-      --text: #151915;
-      --muted: #596252;
-      --line: #d3d9ca;
-      --accent: #d4ff62;
-      --accent-ink: #192007;
-      --danger: #a51c30;
-      --header: rgba(245, 245, 237, .94);
-      --shadow: 0 24px 80px rgba(30, 40, 20, .1);
-    }
-
-* { box-sizing: border-box; }
-    html { scroll-behavior: smooth; scroll-padding-top: 100px; }
-    body {
-      margin: 0;
-      background: var(--bg);
-      color: var(--text);
-      font-family: Tahoma, Arial, sans-serif;
-      line-height: 1.7;
-    }
-
-body.modal-open { overflow: hidden; }
-    button, input, select, textarea { font: inherit; }
-    button, a, input, select, textarea { -webkit-tap-highlight-color: transparent; }
-    button, a { touch-action: manipulation; }
-    button { cursor: pointer; }
-    a { color: inherit; text-decoration: none; }
-    button:disabled { cursor: not-allowed; opacity: .45; }
-
-:focus-visible {
-      outline: 3px solid var(--accent);
-      outline-offset: 4px;
-    }
-
-:root[data-theme="light"] :focus-visible { outline-color: #587000; }
-    ::selection { color: #172000; background: var(--accent); }
-    [hidden] { display: none !important; }
-
-.container { width: min(1220px, 92%); margin-inline: auto; }
-    .muted { color: var(--muted); }
-    .eyebrow {
-      color: var(--muted);
-      letter-spacing: 3px;
-      font-size: .75rem;
-      font-weight: bold;
-    }
-    .row { display: flex; align-items: center; gap: 12px; }
-    .between { justify-content: space-between; }
-    .wrap { flex-wrap: wrap; }
-    .stack { display: grid; gap: 16px; }
-
-.skip-link {
-      position: fixed;
-      top: -100px;
-      right: 12px;
-      z-index: 100;
-      padding: 12px;
-      color: #152000;
-      background: var(--accent);
-    }
-    .skip-link:focus { top: 10px; }
-
-.announcement {
-      padding: 8px 16px;
-      text-align: center;
-      color: var(--accent-ink);
-      background: var(--accent);
-      font-size: .78rem;
-    }
-
-header {
-      position: sticky;
-      top: 0;
-      z-index: 20;
-      border-bottom: 1px solid var(--line);
-      background: var(--header);
-      backdrop-filter: blur(18px);
-    }
-
-.nav { min-height: 82px; }
-    .logo {
-      font-family: Arial, sans-serif;
-      font-size: 2.2rem;
-      font-weight: 900;
-      letter-spacing: -3px;
-      line-height: 1;
-    }
-    .logo span { color: var(--accent); }
-    :root[data-theme="light"] .logo span { color: #698000; }
-
-.nav-links { display: flex; gap: 25px; font-size: .85rem; }
-    .nav-links a:hover { text-decoration: underline; text-underline-offset: 7px; }
-
-.btn {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      min-height: 46px;
-      border: 1px solid var(--line);
-      border-radius: 14px;
-      padding: 10px 17px;
-      background: var(--surface);
-      color: var(--text);
-      font-weight: bold;
-      font-size: .85rem;
-      transition: transform .2s, background .2s;
-    }
-    .btn:hover { transform: translateY(-2px); background: var(--surface-2); }
-    .btn.primary {
-      color: var(--accent-ink);
-      background: var(--accent);
-      border-color: var(--accent);
-    }
-    .btn.primary:hover { background: #e0ff91; }
-    .btn.ghost { background: transparent; }
-    .btn.small { padding: 7px 12px; min-height: 38px; }
-    .btn.full { width: 100%; }
-    .icon-btn {
-      width: 44px;
-      height: 44px;
-      padding: 0;
-      border: 1px solid var(--line);
-      border-radius: 50%;
-      background: var(--surface);
-      color: var(--text);
-      font-size: 1.1rem;
-      display: inline-grid;
-      place-items: center;
-    }
-    .icon-btn[aria-pressed="true"] {
-      background: var(--accent);
-      color: var(--accent-ink);
-    }
-    .counter {
-      min-width: 23px;
-      padding: 0 6px;
-      border-radius: 30px;
-      background: var(--accent);
-      color: var(--accent-ink);
-      text-align: center;
-      font-size: .72rem;
-    }
-
-.hero {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      align-items: center;
-      gap: 30px;
-      padding-block: 75px 55px;
-    }
-
-h1 {
-      margin: 18px 0;
-      font-size: clamp(2.6rem, 5.3vw, 5rem);
-      line-height: 1.2;
-      letter-spacing: -2px;
-    }
-    h1 em { font-style: normal; color: var(--accent); }
-    :root[data-theme="light"] h1 em { color: #617600; }
-    .hero p { color: var(--muted); max-width: 470px; }
-    .hero-actions { margin-top: 26px; }
-    .hero-note { font-size: .76rem; margin-top: 24px; }
-
-.scene {
-      position: relative;
-      min-height: 450px;
-      display: grid;
-      place-items: center;
-      perspective: 1100px;
-      overflow: hidden;
-      border: 1px solid var(--line);
-      border-radius: 38px;
-      background:
-        radial-gradient(ellipse at 40% 45%, #d4ff622a, transparent 60%),
-        var(--surface);
-    }
-
-.scene-word {
-      position: absolute;
-      color: var(--text);
-      opacity: .055;
-      font: 900 clamp(6rem, 13vw, 11rem)/1 Arial, sans-serif;
-      letter-spacing: -10px;
-      user-select: none;
-    }
-    .orbit {
-      position: absolute;
-      width: 78%;
-      aspect-ratio: 1;
-      border: 1px solid var(--line);
-      border-radius: 50%;
-      transform: rotateX(65deg) rotateZ(-25deg);
-    }
-    .orbit.second { width: 95%; transform: rotateX(65deg) rotateZ(25deg); }
-
-.hero-shoe {
-      position: relative;
-      z-index: 2;
-      width: 95%;
-      transform-style: preserve-3d;
-      animation: float 6s ease-in-out infinite;
-      filter: drop-shadow(0 35px 18px #0005);
-    }
-    .hero-shoe svg { width: 100%; display: block; }
-
-@keyframes float {
-      0%, 100% { transform: translateY(0) rotateY(-13deg) rotateZ(-9deg); }
-      50% { transform: translateY(-20px) rotateY(13deg) rotateZ(-4deg); }
-    }
-
-.scene-tag {
-      position: absolute;
-      z-index: 3;
-      bottom: 25px;
-      right: 25px;
-      padding: 10px 16px;
-      border: 1px solid var(--line);
-      border-radius: 16px;
-      background: var(--surface);
-      font-size: .75rem;
-    }
-    .scene-dot {
-      position: absolute;
-      top: 24px;
-      left: 24px;
-      width: 12px;
-      height: 12px;
-      border-radius: 50%;
-      background: var(--accent);
-      box-shadow: 0 0 28px #d4ff6270;
-    }
-
-.benefits {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      border-block: 1px solid var(--line);
-      margin-bottom: 65px;
-    }
-    .benefit { padding: 22px; }
-    .benefit + .benefit { border-right: 1px solid var(--line); }
-    .benefit strong { display: block; font-size: .9rem; }
-    .benefit span { color: var(--muted); font-size: .76rem; }
-
-.section-head { margin-bottom: 26px; align-items: end; }
-    .section-head h2 { font-size: clamp(1.7rem, 3vw, 2.6rem); margin: 5px 0 0; }
-    .section-head p { margin: 6px 0; }
-    .catalog { padding-bottom: 75px; }
-
-.filters {
-      display: grid;
-      grid-template-columns: 1.6fr 1fr 1fr;
-      gap: 14px;
-      padding: 18px;
-      margin-bottom: 18px;
-      border: 1px solid var(--line);
-      border-radius: var(--radius);
-      background: var(--surface);
-    }
-    .field { display: grid; gap: 7px; }
-    .field > span, .field > label { font-size: .77rem; color: var(--muted); }
-
-input, select, textarea {
-      width: 100%;
-      min-width: 0;
-      border: 1px solid var(--line);
-      border-radius: 12px;
-      padding: 11px 13px;
-      color: var(--text);
-      background: var(--bg);
-    }
-    input[type="range"] { accent-color: #93b627; padding: 0; min-height: 38px; }
-    input[type="checkbox"] { width: 20px; height: 20px; accent-color: #718d1b; }
-    textarea { resize: vertical; }
-
-.category-bar { margin-bottom: 25px; }
-    .chip {
-      padding: 9px 19px;
-      border: 1px solid var(--line);
-      border-radius: 50px;
-      color: var(--muted);
-      background: transparent;
-      font-size: .8rem;
-    }
-    .chip[aria-pressed="true"] {
-      color: var(--accent-ink);
-      border-color: var(--accent);
-      background: var(--accent);
-    }
-
-.grid {
-      display: grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
-      gap: 20px;
-    }
-    .product {
-      overflow: hidden;
-      border: 1px solid var(--line);
-      border-radius: var(--radius);
-      background: var(--surface);
-      transition: transform .25s, box-shadow .25s;
-    }
-    @media (hover: hover) {
-      .product:hover {
-        transform: translateY(-7px);
-        box-shadow: var(--shadow);
-      }
-      .product:hover .product-art svg { transform: rotate(-7deg) scale(1.05); }
-    }
-    .art-wrap { position: relative; }
-    .product-art {
-      width: 100%;
-      aspect-ratio: 1.12;
-      padding: 15px;
-      border: 0;
-      border-bottom: 1px solid var(--line);
-      background: radial-gradient(circle, #ffffff0b, transparent), var(--surface-2);
-      display: grid;
-      place-items: center;
-    }
-    .product-art svg { width: 100%; transition: transform .35s; }
-    .favorite { position: absolute; top: 12px; left: 12px; z-index: 1; }
-    .badge {
-      position: absolute;
-      top: 15px;
-      right: 12px;
-      border-radius: 6px;
-      padding: 3px 8px;
-      color: var(--accent-ink);
-      background: var(--accent);
-      font-size: .6rem;
-      font-weight: bold;
-    }
-    .product-info { padding: 17px; }
-    .product-info h3 { margin: 4px 0 8px; font-size: .98rem; }
-    .product-info p { margin: 0; font-size: .7rem; color: var(--muted); }
-    .price-row { margin-block: 12px 16px; }
-    .price { font-weight: bold; font-size: .94rem; }
-    .swatches { display: flex; gap: 4px; }
-    .swatch {
-      width: 13px;
-      height: 13px;
-      border-radius: 50%;
-      border: 1px solid #888;
-    }
-    .compact .grid { gap: 12px; }
-    .compact .product-info { padding: 12px; }
-    .compact .product-art { aspect-ratio: 1.5; }
-    .empty {
-      grid-column: 1 / -1;
-      padding: 48px 20px;
-      text-align: center;
-      border: 1px dashed var(--line);
-      border-radius: var(--radius);
-      color: var(--muted);
-    }
-
-.story {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 35px;
-      padding: 45px;
-      margin-bottom: 70px;
-      border: 1px solid var(--line);
-      border-radius: 30px;
-      background: var(--surface);
-    }
-    .story h2 { font-size: 2rem; line-height: 1.4; margin-top: 10px; }
-    .story p { color: var(--muted); font-size: .9rem; }
-    .story-brand {
-      display: grid;
-      place-items: center;
-      border-radius: 22px;
-      background: var(--accent);
-      color: var(--accent-ink);
-      min-height: 220px;
-      font: 900 clamp(4rem, 10vw, 8rem)/1 Arial, sans-serif;
-      letter-spacing: -8px;
-      transform: rotate(-3deg);
-    }
-
-.faq { padding-bottom: 70px; max-width: 850px; margin-inline: auto; }
-    .faq h2 { margin-bottom: 25px; }
-    details { border-bottom: 1px solid var(--line); padding: 17px 0; }
-    summary { cursor: pointer; font-weight: bold; }
-    details p { color: var(--muted); font-size: .9rem; }
-
-footer { padding: 38px 0 22px; border-top: 1px solid var(--line); }
-    .footer-top { align-items: start; }
-    .phone { font-size: 1.6rem; font-weight: bold; letter-spacing: 1px; }
-    .footer-bottom {
-      padding-top: 24px;
-      margin-top: 30px;
-      border-top: 1px solid var(--line);
-      font-size: .75rem;
-      color: var(--muted);
-    }
-
-dialog {
-      width: min(760px, calc(100% - 24px));
-      max-height: 90dvh;
-      padding: 0;
-      border: 1px solid var(--line);
-      border-radius: 26px;
-      color: var(--text);
-      background: var(--surface);
-      box-shadow: var(--shadow);
-      overflow: auto;
-    }
-    dialog::backdrop { background: #000a; backdrop-filter: blur(7px); }
-    .dialog-header {
-      position: sticky;
-      top: 0;
-      z-index: 4;
-      padding: 17px 22px;
-      background: var(--surface);
-      border-bottom: 1px solid var(--line);
-    }
-    .dialog-header h2 { margin: 0; font-size: 1.1rem; }
-    .dialog-body { padding: 24px; }
-    .detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
-    .detail-art {
-      display: grid;
-      place-items: center;
-      border-radius: 20px;
-      background: var(--surface-2);
-      min-height: 240px;
-    }
-    .detail-art svg { width: 100%; }
-    .detail-copy h3 { margin: 0 0 5px; }
-    .detail-copy p { font-size: .83rem; }
-    .detail-options { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-
-.cart-item {
-      display: grid;
-      grid-template-columns: 85px 1fr auto;
-      gap: 15px;
-      align-items: center;
-      padding-block: 16px;
-      border-bottom: 1px solid var(--line);
-    }
-    .cart-art { border-radius: 12px; background: var(--surface-2); }
-    .cart-art svg { display: block; width: 100%; }
-    .cart-item h3 { margin: 0; font-size: .86rem; }
-    .cart-item p { margin: 4px 0; font-size: .73rem; }
-    .quantity { display: flex; align-items: center; gap: 10px; margin-top: 8px; }
-    .quantity button { width: 30px; height: 30px; font-size: .95rem; }
-    .remove { border: 0; color: var(--danger); background: transparent; font-size: .73rem; }
-    .totals {
-      display: grid;
-      gap: 10px;
-      margin-block: 20px;
-      padding: 18px;
-      border-radius: 18px;
-      background: var(--surface-2);
-    }
-    .total-final { border-top: 1px solid var(--line); padding-top: 12px; font-weight: bold; }
-    .notice { font-size: .76rem; color: var(--muted); }
-    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
-    .span-two { grid-column: 1 / -1; }
-    .check-line { display: flex; align-items: start; gap: 10px; font-size: .8rem; }
-    .check-line input { flex: 0 0 auto; margin-top: 4px; }
-    .setting-row {
-      padding-block: 18px;
-      border-bottom: 1px solid var(--line);
-    }
-    .setting-row p { margin: 3px 0 0; font-size: .76rem; color: var(--muted); }
-    .setting-row select { width: 145px; }
-    .order-output { min-height: 260px; font-size: .85rem; }
-
-.toast {
-      position: fixed;
-      bottom: 24px;
-      left: 50%;
-      transform: translateX(-50%) translateY(120px);
-      opacity: 0;
-      z-index: 100;
-      width: max-content;
-      max-width: calc(100% - 32px);
-      padding: 13px 22px;
-      border: 1px solid var(--line);
-      border-radius: 15px;
-      color: var(--accent-ink);
-      background: var(--accent);
-      box-shadow: var(--shadow);
-      transition: transform .25s, opacity .25s;
-      pointer-events: none;
-      font-size: .85rem;
-    }
-    .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
-
-.reduced-motion *, .reduced-motion *::before, .reduced-motion *::after {
-      animation: none !important;
-      transition: none !important;
-      scroll-behavior: auto !important;
-    }
-    html.reduced-motion { scroll-behavior: auto; }
-
-@media (prefers-reduced-motion: reduce) {
-      *, *::before, *::after {
-        animation: none !important;
-        transition: none !important;
-        scroll-behavior: auto !important;
-      }
-    }
-
-@media (max-width: 1000px) {
-      .grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-      .nav-links { gap: 14px; }
-      .hero { gap: 22px; }
-      .scene { min-height: 370px; }
-    }
-
-@media (max-width: 760px) {
-      .nav { min-height: 72px; flex-wrap: wrap; padding-block: 13px; gap: 14px; }
-      .nav-links { order: 3; justify-content: center; width: 100%; font-size: .78rem; }
-      .nav-actions { gap: 7px; }
-      .nav-actions .btn { padding-inline: 11px; }
-      .hero { grid-template-columns: 1fr; padding-top: 38px; }
-      .hero p { max-width: none; }
-      .scene { min-height: 350px; }
-      .scene-word { font-size: 8rem; }
-      .hero-shoe { max-width: 470px; }
-      .benefits { grid-template-columns: 1fr; margin-bottom: 40px; }
-      .benefit { padding: 15px 8px; }
-      .benefit + .benefit { border-right: 0; border-top: 1px solid var(--line); }
-      .filters { grid-template-columns: 1fr 1fr; }
-      .search-field { grid-column: 1 / -1; }
-      .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
-      .product-info { padding: 12px; }
-      .product-info h3 { font-size: .85rem; }
-      .price { font-size: .8rem; }
-      .story { grid-template-columns: 1fr; padding: 25px; gap: 20px; }
-      .story-brand { min-height: 180px; }
-      .section-head { align-items: start; }
-      .section-head p { font-size: .78rem; }
-      .detail-grid { grid-template-columns: 1fr; }
-      .detail-art { min-height: 180px; }
-      .detail-art svg { max-width: 320px; }
-      .footer-top { flex-direction: column; gap: 24px; }
-    }
-
-@media (max-width: 420px) {
-      .logo { font-size: 1.85rem; }
-      .nav-actions .btn { font-size: .72rem; }
-      .nav-actions .icon-btn { width: 38px; height: 38px; }
-      .filters { grid-template-columns: 1fr; }
-      .search-field { grid-column: auto; }
-      .product-art { padding: 7px; }
-      .price-row { flex-wrap: wrap; gap: 8px; }
-      .form-grid { grid-template-columns: 1fr; }
-      .span-two { grid-column: auto; }
-      .cart-item { grid-template-columns: 60px 1fr; gap: 10px; }
-      .cart-item > .remove { grid-column: 2; justify-self: start; }
-      .dialog-body { padding: 16px; }
-    }
-  </style>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        cairo: ['Cairo', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            dark: '#0a0a0c',
+                            card: '#121218',
+                            accent: '#d4af37', /* Gold accent */
+                            neon: '#00f2fe',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Cairo', sans-serif;
+            background-color: #0a0a0c;
+            color: #f3f4f6;
+            overflow-x: hidden;
+        }
+        #canvas3d {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: -1;
+            pointer-events: none;
+        }
+        .glass-panel {
+            background: rgba(18, 18, 24, 0.75);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(212, 175, 55, 0.2);
+        }
+        .product-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(0, 242, 254, 0.15);
+        }
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0a0a0c;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #d4af37;
+            border-radius: 4px;
+        }
+    </style>
 </head>
+<body class="bg-brand-dark min-h-screen flex flex-col">
 
-<body>
-  <a class="skip-link" href="#main">انتقل إلى المحتوى</a>
+    <!-- Three.js 3D Background Canvas -->
+    <canvas id="canvas3d"></canvas>
 
-<div class="announcement">
-    SOUN — ستايل على مزاجك · للاستفسارات
-    <a href="tel:01122160714"><bdi>01122160714</bdi></a>
-  </div>
+    <!-- Top Announcement Bar -->
+    <div class="bg-gradient-to-r from-yellow-600 via-amber-500 to-yellow-600 text-brand-dark text-xs sm:text-sm py-2 px-4 text-center font-bold tracking-wider shadow-md">
+        ✨ أحدث صيحات الموضة والأحذية لجميع الأجسام والبشرات | استفسارات المبيعات والدعم: <span dir="ltr" class="inline-block bg-brand-dark text-amber-400 px-2 py-0.5 rounded mx-1">01122160714</span> ✨
+    </div>
 
-<header>
-    <nav class="container nav row between" aria-label="التنقل الرئيسي">
-      <a href="#" class="logo" dir="ltr" aria-label="SOUN الرئيسية">soun<span>.</span></a>
+    <!-- Navigation Bar -->
+    <header class="sticky top-0 z-50 glass-panel border-b border-gray-800 transition-all duration-300">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+            <!-- Logo -->
+            <a href="#" class="flex items-center gap-3 group">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-yellow-500 to-cyan-400 flex items-center justify-center text-brand-dark font-black text-2xl shadow-lg group-hover:rotate-12 transition-transform">
+                    S
+                </div>
+                <span class="text-2xl font-black tracking-widest text-white uppercase bg-gradient-to-r from-white via-gray-200 to-amber-400 bg-clip-text text-transparent">
+                    SOUN
+                </span>
+            </a>
 
-<div class="nav-links">
-        <a href="#shop">المجموعة</a>
-        <a href="#about">عن SOUN</a>
-        <a href="#faq">الأسئلة الشائعة</a>
-        <a href="#contact">تواصل معنا</a>
-      </div>
+            <!-- Nav Links -->
+            <nav class="hidden md:flex items-center gap-8 font-semibold text-gray-300">
+                <a href="#home" class="hover:text-amber-400 transition-colors">الرئيسية</a>
+                <a href="#shop" class="hover:text-amber-400 transition-colors">التشكيلة الكاملة</a>
+                <a href="#inclusivity" class="hover:text-amber-400 transition-colors">المقاسات والبشرة</a>
+                <a href="#about" class="hover:text-amber-400 transition-colors">عن SOUN</a>
+                <a href="#contact" class="hover:text-amber-400 transition-colors">تواصل معنا</a>
+            </nav>
 
-<div class="row nav-actions">
-        <button id="favoritesToggle" class="icon-btn"
-                aria-label="عرض المفضلة" aria-pressed="false">♡</button>
-        <button id="settingsOpen" class="icon-btn"
-                aria-label="فتح إعدادات الموقع">⚙</button>
-        <button id="cartOpen" class="btn">
-          السلة <span class="counter" id="cartCount">0</span>
-        </button>
-      </div>
-    </nav>
-  </header>
-
-<main id="main">
-    <section class="container hero" aria-labelledby="heroTitle">
-      <div>
-        <div class="eyebrow" dir="ltr">SOUN / EVERYDAY EXPRESSION</div>
-        <h1 id="heroTitle">مش مجرد لبس.<br>دي <em>طريقتك.</em></h1>
-        <p>
-          أحذية وملابس تكمل شخصيتك. اختَر القطع اللي شبهك،
-          نسّق إطلالتك، وجهّز طلبك في خطوات بسيطة.
-        </p>
-        <div class="row wrap hero-actions">
-          <a class="btn primary" href="#shop">اكتشف المجموعة ←</a>
-          <a class="btn ghost" href="tel:01122160714">اسألنا عن منتج</a>
+            <!-- Actions -->
+            <div class="flex items-center gap-4">
+                <button onclick="toggleCart()" class="relative p-2.5 rounded-xl bg-gray-800/80 hover:bg-gray-700 text-amber-400 border border-gray-700 transition-all shadow-inner">
+                    <i class="fa-solid fa-bag-shopping text-lg"></i>
+                    <span id="cart-count" class="absolute -top-1 -right-1 bg-cyan-500 text-brand-dark text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center shadow">0</span>
+                </button>
+                <a href="tel:01122160714" class="hidden sm:flex items-center gap-2 bg-gradient-to-r from-amber-500 to-yellow-600 hover:from-amber-400 hover:to-yellow-500 text-brand-dark font-bold px-4 py-2.5 rounded-xl shadow-lg transition-all transform hover:scale-105">
+                    <i class="fa-solid fa-phone"></i>
+                    <span>01122160714</span>
+                </a>
+            </div>
         </div>
-        <p class="hero-note">أحذية · تيشيرتات · هوديز · بناطيل</p>
-      </div>
+    </header>
 
-<div class="scene" aria-label="رسم توضيحي لحذاء بتأثير عمق وحركة">
-        <div class="scene-word" dir="ltr" aria-hidden="true">SOUN</div>
-        <div class="orbit" aria-hidden="true"></div>
-        <div class="orbit second" aria-hidden="true"></div>
-        <div class="scene-dot" aria-hidden="true"></div>
-        <div id="heroShoe" class="hero-shoe" aria-hidden="true"></div>
-        <div class="scene-ta
+    <!-- Hero Section -->
+    <section id="home" class="relative min-h-[85vh] flex items-center justify-center text-center px-4 py-20">
+        <div class="max-w-4xl mx-auto space-y-8 z-10">
+            <span class="inline-block py-1.5 px-4 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 text-sm font-semibold tracking-wider uppercase backdrop-blur-md">
+                ✨ عالم الموضة ثلاثي الأبعاد بلا حدود
+            </span>
+            <h1 class="text-4xl sm:text-6xl lg:text-7xl font-black tracking-tight leading-tight">
+                أناقة تليق <span class="bg-gradient-to-r from-amber-400 via-yellow-200 to-cyan-400 bg-clip-text text-transparent">بكل البشر</span> وبجميع المقاسات
+            </h1>
+            <p class="text-lg sm:text-xl text-gray-300 max-w-2xl mx-auto font-light leading-relaxed">
+                اكتشف تشكيلة SOUN الحصرية من الملابس والأحذية المصممة خصيصاً لتناسب كل ألوان البشرة وكل المقاسات من الصغير إلى الضخم (XS حتى 4XL)، بمعاينة ثلاثية الأبعاد فائقة الدقة.
+            </p>
+            <div class="flex flex-wrap justify-center gap-4 pt-4">
+                <a href="#shop" class="bg-gradient-to-r from-amber-500 to-yellow-600 text-brand-dark font-extrabold px-8 py-4 rounded-xl shadow-2xl hover:shadow-amber-500/25 transition-all transform hover:-translate-y-1">
+                    تسوق التشكيلة الآن
+                </a>
+                <a href="tel:01122160714" class="glass-panel text-white hover:text-amber-400 font-bold px-8 py-4 rounded-xl transition-all border border-gray-700 flex items-center gap-2">
+                    <i class="fa-solid fa-headset text-amber-400"></i> اطلب استشارة فورية
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Inclusivity Highlight Section -->
+    <section id="inclusivity" class="py-16 px-4 bg-brand-card/50 border-y border-gray-800">
+        <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
+            <div class="p-8 rounded-2xl glass-panel border border-gray-800">
+                <div class="w-16 h-16 mx-auto mb-4 rounded-2xl bg-amber-500/10 text-amber-400 flex items-center justify-center text-3xl">
+                    <i class="fa-solid fa-shirt"></i>
+                </div>
+                <h3 class="text-xl font-bold mb-2 text-white">كل المقاسات متاحة</h3>
+                <p class="text-gray-400 text-sm">تصاميم مدروسة بعناية لتناسب القوام النحيف، الممتلئ، وكل المقاسات الخاصة من XS حتى 4XL.</p>
+            </div>
+            <div class="p-8 rounded-2xl glass-panel border border-gray-800">
+                <div class="w-16 h-16 mx-auto mb-4 rounded-2xl bg-cyan-500/10 text-cyan-400 flex items-center justify-center text-3xl">
+                    <i class="fa-solid fa-users"></i>
+                </div>
+                <h3 class="text-xl font-bold mb-2 text-white">لكل ألوان البشرة</h3>
+                <p class="text-gray-400 text-sm">لوحة ألوان ومنتجات متكاملة تتناغم برقي مع درجات البشرة المختلفة لتظهر بأبهى حلة.</p>
+            </div>
+            <div class="p-8 rounded-2xl glass-panel border border-gray-800">
+                <div class="w-16 h-16 mx-auto mb-4 rounded-2xl bg-yellow-500/10 text-yellow-400 flex items-center justify-center text-3xl">
+                    <i class="fa-solid fa-cube"></i>
+                </div>
+                <h3 class="text-xl font-bold mb-2 text-white">معاينة ثلاثية الأبعاد 3D</h3>
+                <p class="text-gray-400 text-sm">شاهد تفاصيل القماش وجودة الحياكة وتصميم الأحذية بزاوية 360 درجة كأنك في المعرض الحقيقي.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Shop Catalog Section -->
+    <section id="shop" class="py-20 px-4 max-w-7xl mx-auto flex-grow w-full">
+        <div class="flex flex-col md:flex-row justify-between items-center mb-12 gap-6">
+            <div>
+                <h2 class="text-3xl sm:text-4xl font-black text-white mb-2">تشكيلة SOUN العالمية</h2>
+                <p class="text-gray-400">أحدث صيحات الموضة للأحذية والملابس الفاخرة</p>
+            </div>
+
+            <!-- Category Filters -->
+            <div class="flex flex-wrap gap-2 bg-gray-900/80 p-1.5 rounded-2xl border border-gray-800">
+                <button onclick="filterProducts('all')" class="filter-btn px-5 py-2 rounded-xl text-sm font-bold bg-amber-500 text-brand-dark transition-all">الكل</button>
+                <button onclick="filterProducts('shoes')" class="filter-btn px-5 py-2 rounded-xl text-sm font-bold text-gray-300 hover:text-white transition-all">أحذية 3D</button>
+                <button onclick="filterProducts('clothes')" class="filter-btn px-5 py-2 rounded-xl text-sm font-bold text-gray-300 hover:text-white transition-all">ملابس عصرية</button>
+                <button onclick="filterProducts('plus')" class="filter-btn px-5 py-2 rounded-xl text-sm font-bold text-gray-300 hover:text-white transition-all">مقاسات خاصة Plus</button>
+            </div>
+        </div>
+
+        <!-- Products Grid -->
+        <div id="products-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+            <!-- Dynamic JavaScript content will inject here -->
+        </div>
+    </section>
+
+    <!-- Cart Slide-over Drawer -->
+    <div id="cart-drawer" class="fixed inset-0 z-50 overflow-hidden hidden">
+        <div class="absolute inset-0 bg-black/70 backdrop-blur-sm transition-opacity" onclick="toggleCart()"></div>
+        <div class="absolute inset-y-0 left-0 max-w-full flex pl-10">
+            <div class="w-screen max-w-md bg-brand-card border-r border-gray-800 flex flex-col shadow-2xl">
+                <!-- Cart Header -->
+                <div class="p-6 border-b border-gray-800 flex items-center justify-between">
+                    <h3 class="text-xl font-bold text-white flex items-center gap-2">
+                        <i class="fa-solid fa-bag-shopping text-amber-400"></i> سلة التسوق الخاصة بك
+                    </h3>
+                    <button onclick="toggleCart()" class="text-gray-400 hover:text-white p-2">
+                        <i class="fa-solid fa-xmark text-xl"></i>
+                    </button>
+                </div>
+                <!-- Cart Items -->
+                <div id="cart-items" class="flex-1 overflow-y-auto p-6 space-y-4 divide-y divide-gray-800">
+                    <p class="text-gray-400 text-center py-12">سلة التسوق فارغة حالياً</p>
+                </div>
+                <!-- Cart Footer -->
+                <div class="p-6 border-t border-gray-800 bg-brand-dark/50 space-y-4">
+                    <div class="flex justify-between text-lg font-bold">
+                        <span class="text-gray-300">الإجمالي الكلي:</span>
+                        <span id="cart-total" class="text-amber-400">0.00 ج.م</span>
+                    </div>
+                    <button onclick="checkout()" class="w-full bg-gradient-to-r from-amber-500 to-yellow-600 hover:from-amber-400 hover:to-yellow-500 text-brand-dark font-black py-3.5 rounded-xl shadow-lg transition-all">
+                        إتمام الطلب عبر الهاتف أو الواتساب
+                    </button>
+                    <p class="text-xs text-center text-gray-500">للاستفسارات العاجلة اتصل بنا على: <span class="text-amber-400 font-bold" dir="ltr">01122160714</span></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-brand-card border-t border-gray-800 py-12 px-4 mt-20">
+        <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+            <div class="space-y-4">
+                <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-lg bg-gradient-to-tr from-yellow-500 to-cyan-400 flex items-center justify-center text-brand-dark font-black text-xl">
+                        S
+                    </div>
+                    <span class="text-xl font-black text-white tracking-widest">SOUN</span>
+                </div>
+                <p class="text-gray-400 text-sm">الموقع الأول المتخصص في تقديم أحدث صيحات الموضة والأحذية ثلاثية الأبعاد الشاملة لكل المقاسات وألوان البشرة.</p>
+            </div>
+            <div>
+                <h4 class="text-white font-bold mb-4">روابط سريعة</h4>
+                <ul class="space-y-2 text-sm text-gray-400">
+                    <li><a href="#home" class="hover:text-amber-400 transition-colors">الرئيسية</a></li>
+                    <li><a href="#shop" class="hover:text-amber-400 transition-colors">التشكيلة الكاملة</a></li>
+                    <li><a href="#inclusivity" class="hover:text-amber-400 transition-colors">سياسة المقاسات والشمولية</a></li>
+                    <li><a href="#about" class="hover:text-amber-400 transition-colors">من نحن</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="text-white font-bold mb-4">خدمة العملاء والاستفسارات</h4>
+                <p class="text-sm text-gray-400 mb-2">تواصل معنا طوال أيام الأسبوع:</p>
+                <a href="tel:01122160714" class="inline-block text-amber-400 font-black text-lg tracking-wider bg-amber-500/10 px-4 py-2 rounded-xl border border-amber-500/20" dir="ltr">
+                    01122160714
+                </a>
+            </div>
+            <div>
+                <h4 class="text-white font-bold mb-4">النشرة البريدية</h4>
+                <p class="text-sm text-gray-400 mb-4">اشترك ليصلك كل جديد وعروض SOUN الحصرية.</p>
+                <div class="flex gap-2">
+                    <input type="email" placeholder="بريدك الإلكتروني" class="bg-brand-dark border border-gray-700 px-4 py-2 rounded-xl text-sm text-white focus:outline-none focus:border-amber-400 flex-1">
+                    <button onclick="alert('تم الاشتراك بنجاح في نشرة SOUN!')" class="bg-amber-500 hover:bg-amber-400 text-brand-dark px-4 py-2 rounded-xl font-bold text-sm">انضم</button>
+                </div>
+            </div>
+        </div>
+        <div class="max-w-7xl mx-auto pt-8 border-t border-gray-800 text-center text-sm text-gray-500">
+            جميع الحقوق محفوظة © 2026 موقع <span class="text-white font-bold">SOUN</span>. تصميم وصناعة المستقبل.
+        </div>
+    </footer>
+
+    <!-- JavaScript Application Logic -->
+    <script>
+        // --- Three.js 3D Background Animation ---
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('canvas3d'), alpha: true, antialias: true });
+        
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+        // Create floating 3D geometric shapes representing fashion and modern design
+        const geometry = new THREE.IcosahedronGeometry(1, 0);
+        const material = new THREE.MeshStandardMaterial({
+            color: 0xd4af37,
+            wireframe: true,
+            roughness: 0.3,
+            metalness: 0.8
+        });
+
+        const particlesGroup = new THREE.Group();
+        const shapesCount = 25;
+        const shapes = [];
+
+        for (let i = 0; i < shapesCount; i++) {
+            const mesh = new THREE.Mesh(geometry, material);
+            mesh.position.set(
+                (Math.random() - 0.5) * 30,
+                (Math.random() - 0.5) * 30,
+                (Math.random() - 0.5) * 30
+            );
+            const scale = Math.random() * 1.5 + 0.5;
+            mesh.scale.set(scale, scale, scale);
+            mesh.rotationSpeed = {
+                x: (Math.random() - 0.5) * 0.01,
+                y: (Math.random() - 0.5) * 0.01
+            };
+            particlesGroup.add(mesh);
+            shapes.push(mesh);
+        }
+
+        scene.add(particlesGroup);
+
+        // Add lighting
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.7);
+        scene.add(ambientLight);
+
+        const pointLight = new THREE.PointLight(0x00f2fe, 2, 50);
+        pointLight.position.set(10, 10, 10);
+        scene.add(pointLight);
+
+        camera.position.z = 15;
+
+        // Mouse interaction
+        let mouseX = 0;
+        let mouseY = 0;
+        window.addEventListener('mousemove', (e) => {
+            mouseX = (e.clientX / window.innerWidth) - 0.5;
+            mouseY = (e.clientY / window.innerHeight) - 0.5;
+        });
+
+        // Animation Loop
+        function animate() {
+            requestAnimationFrame(animate);
+
+            particlesGroup.rotation.y += 0.002 + (mouseX * 0.05);
+            particlesGroup.rotation.x += 0.001 + (mouseY * 0.05);
+
+            shapes.forEach(shape => {
+                shape.rotation.x += shape.rotationSpeed.x;
+                shape.rotation.y += shape.rotationSpeed.y;
+            });
+
+            renderer.render(scene, camera);
+        }
+        animate();
+
+        // Responsive Canvas
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+        // --- Products Database ---
+        const products = [
+            {
+                id: 1,
+                name: "حذاء SOUN 3D الفضائي التفاعلي",
+                category: "shoes",
+                price: 2450,
+                image: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=600&q=80",
+                sizes: ["38", "39", "40", "41", "42", "43", "44", "45", "46"],
+                description: "حذاء عصري بتصميم ثلاثي الأبعاد وراحة فائقة تناسب جميع ألوان البشرة والإطلالات."
+            },
+            {
+                id: 2,
+                name: "جاكيت جلد أورباني فاخر",
+                category: "clothes",
+                price: 3800,
+                image: "https://images.unsplash.com/photo-1551028719-00167b16eac5?auto=format&fit=crop&w=600&q=80",
+                sizes: ["S", "M", "L", "XL", "XXL"],
+                description: "مصنوع بأعلى خامات الجلد العصري الذي يتناغم مع مختلف درجات البشرة."
+            },
+            {
+                id: 3,
+                name: "هودي SOUN الشامل (مقاسات خاصة)",
+                category: "plus",
+                price: 1950,
+                image: "https://images.unsplash.com/photo-1556905055-8f358a7a47b2?auto=format&fit=crop&w=600&q=80",
+                sizes: ["XXL", "3XL", "4XL"],
+                description: "مصمم خصيصاً للمقاسات الكبيرة (Plus Size) براحة مطلقة وتصميم ثلاثي الأبعاد متميز."
+            },
+            {
+                id: 4,
+                name: "حذاء رياضي كلاسيك 3D رانر",
+                category: "shoes",
+                price: 2100,
+                image: "https://images.unsplash.com/photo-1608231387042-66d1773070a5?auto
